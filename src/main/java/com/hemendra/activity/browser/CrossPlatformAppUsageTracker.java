@@ -20,12 +20,13 @@ public class CrossPlatformAppUsageTracker {
 
         while (true) {
             String activeWindow = appUsageTracker.getActiveWindowTitle();
-            log.info("Active window: {}", activeWindow);
+            /*log.info("Active window: {}", activeWindow);*/
             //TODO: I am focusing more on MacOS, Later we will be focusing on Windows and Linux
             if (BrowserTracker.isBrowser(activeWindow)) {
                 if (appUsageTracker instanceof MacOsAppUsageTracker macOsAppUsageTracker) {
                     String browserUrl = macOsAppUsageTracker.getBrowserUrl(activeWindow);
-                    log.info("Browser URL: {}", browserUrl);
+                    //log.info("Browser URL: {}", browserUrl);
+                    macOsAppUsageTracker.trackWebsiteUsage(activeWindow, browserUrl);
                 }
             }
             try {
