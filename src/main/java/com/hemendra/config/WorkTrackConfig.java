@@ -1,6 +1,6 @@
 package com.hemendra.config;
 
-import com.hemendra.UserActivityMonitor;
+import com.hemendra.activity.UserActivityMonitor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;

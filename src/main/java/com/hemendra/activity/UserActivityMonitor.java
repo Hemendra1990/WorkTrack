@@ -1,4 +1,4 @@
-package com.hemendra;
+package com.hemendra.activity;
 
 import com.github.kwhat.jnativehook.GlobalScreen;
 import com.github.kwhat.jnativehook.keyboard.NativeKeyEvent;
