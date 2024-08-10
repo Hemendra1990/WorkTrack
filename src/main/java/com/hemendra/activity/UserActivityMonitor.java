@@ -5,58 +5,65 @@ import com.github.kwhat.jnativehook.keyboard.NativeKeyEvent;
 import com.github.kwhat.jnativehook.keyboard.NativeKeyListener;
 import com.github.kwhat.jnativehook.mouse.NativeMouseEvent;
 import com.github.kwhat.jnativehook.mouse.NativeMouseListener;
+import com.hemendra.component.WorkTrackProperties;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 
 import java.time.LocalDateTime;
-import java.util.logging.Logger;
 
+@Slf4j
+@Component
 public class UserActivityMonitor implements NativeKeyListener, NativeMouseListener {
+
+    @Autowired
+    WorkTrackProperties workTrackProperties;
+
+    public UserActivityMonitor() {
+        this.lastActivityTime = LocalDateTime.now();
+        log.info("Checking idle time {} - {}", Thread.currentThread().getName(), lastActivityTime);
+    }
+
 
     private LocalDateTime lastActivityTime;
     private LocalDateTime idleStartTime;
     private boolean isIdle = false;
-    private static final int IDLE_THRESHOLD_SECONDS = 10;  // For testing, set it to 10 seconds
 
-    public UserActivityMonitor() {
-        lastActivityTime = LocalDateTime.now();
-    }
 
-    public static void main(String[] args) {
-        // Disable logging from JNativeHook
-        Logger logger = Logger.getLogger(GlobalScreen.class.getPackage().getName());
-        logger.setLevel(java.util.logging.Level.OFF);
-
-        UserActivityMonitor monitor = new UserActivityMonitor();
-
+    public void startMonitoring() {
+        log.info("Checking idle time {} - {}", Thread.currentThread().getName(), lastActivityTime);
         try {
             GlobalScreen.registerNativeHook();
+            GlobalScreen.addNativeKeyListener(this);
+            GlobalScreen.addNativeMouseListener(this);
+
+            // Monitor idle and active state in an infinite loop
+            while (true) {
+                this.checkIdleTime();
+                try {
+                    Thread.sleep(1000);  // Check every second
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+            }
         } catch (Exception e) {
             e.printStackTrace();
         }
 
-        GlobalScreen.addNativeKeyListener(monitor);
-        GlobalScreen.addNativeMouseListener(monitor);
-
-        // Monitor idle and active state in an infinite loop
-        while (true) {
-            monitor.checkIdleTime();
-            try {
-                Thread.sleep(1000);  // Check every second
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
-        }
     }
 
-    private void checkIdleTime() {
-        LocalDateTime currentTime = LocalDateTime.now();
-        long idleDuration = java.time.Duration.between(lastActivityTime, currentTime).getSeconds();
 
-        if (!isIdle && idleDuration >= IDLE_THRESHOLD_SECONDS) {
+    private void checkIdleTime() {
+        log.info("Checking idle time {} - {}", Thread.currentThread().getName(), lastActivityTime);
+        LocalDateTime currentTime = LocalDateTime.now();
+        long idleDuration = java.time.Duration.between(this.lastActivityTime, currentTime).getSeconds();
+
+        if (!isIdle && idleDuration >= workTrackProperties.getIdleThresholdSeconds()) {
             // Transition from active to idle
             isIdle = true;
             idleStartTime = currentTime;
             System.out.println("User went idle at: " + idleStartTime);
-        } else if (isIdle && idleDuration < IDLE_THRESHOLD_SECONDS) {
+        } else if (isIdle && idleDuration < workTrackProperties.getIdleThresholdSeconds()) {
             // Transition from idle to active
             isIdle = false;
             System.out.println("User resumed activity at: " + currentTime);
