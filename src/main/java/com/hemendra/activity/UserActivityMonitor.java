@@ -42,6 +42,7 @@ public class UserActivityMonitor implements NativeKeyListener, NativeMouseListen
             GlobalScreen.registerNativeHook();
             GlobalScreen.addNativeKeyListener(this);
             GlobalScreen.addNativeMouseListener(this);
+            GlobalScreen.addNativeMouseMotionListener(this);
             // Monitor idle and active state in an infinite loop
             while (true) {
                 this.checkIdleTime();

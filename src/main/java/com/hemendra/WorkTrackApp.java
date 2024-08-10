@@ -18,7 +18,7 @@ public class WorkTrackApp {
         workTrackAppContext.refresh();
 
         WorkTrackProperties workTrackProperties = workTrackAppContext.getBean(WorkTrackProperties.class);
-        log.info("Staritng " + workTrackProperties.getAppName() + " version " + workTrackProperties.getAppVersion());
+        log.info("Starting {} version {}", workTrackProperties.getAppName(), workTrackProperties.getAppVersion());
 
 
         UserActivityMonitor activityMonitor = workTrackAppContext.getBean(UserActivityMonitor.class);
