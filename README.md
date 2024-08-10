@@ -44,7 +44,3 @@ Contributions are welcome! Please feel free to submit a Pull Request.
 ## License
 
 This project is licensed under the MIT License.
-
----
-
-This README provides a short description of your project, lists key features, and guides users on how to get started. Feel free to adjust the details according to your project's specific needs.
