@@ -30,7 +30,7 @@ public class CrossPlatformAppUsageTracker {
             } else if (os.contains("mac")) {
                 activeWindow = getMacOSActiveWindowTitle();
                 if (isBrowser(activeWindow)) {
-                    String url = getMacOSBrowserUrl();
+                    String url = getMacOSBrowserUrl(activeWindow);
                     System.out.println("Browsing: " + url);
                 }
             } else {
@@ -99,7 +99,9 @@ public class CrossPlatformAppUsageTracker {
         return windowTitle.toLowerCase().contains("chrome") ||
                 windowTitle.toLowerCase().contains("firefox") ||
                 windowTitle.toLowerCase().contains("safari") ||
-                windowTitle.toLowerCase().contains("edge");
+                windowTitle.toLowerCase().contains("edge") ||
+                windowTitle.toLowerCase().contains("arc") ||
+                windowTitle.toLowerCase().contains("opera");
     }
 
     public static String getWindowsBrowserUrl() {
@@ -114,10 +116,11 @@ public class CrossPlatformAppUsageTracker {
         return windowTitle;
     }
 
-    public static String getMacOSBrowserUrl() {
+    public static String getMacOSBrowserUrl(String activeWindow) {
         String url = "";
         try {
-            String[] cmd = {"osascript", "-e", "tell application \"Google Chrome\" to get URL of active tab of first window"};
+            //String[] cmd = {"osascript", "-e", "tell application \"Google Chrome\" to get URL of active tab of first window"};
+            String[] cmd = {"osascript", "-e", "tell application \"" + activeWindow + "\" to get URL of active tab of first window"};
             Process proc = Runtime.getRuntime().exec(cmd);
             BufferedReader stdInput = new BufferedReader(new InputStreamReader(proc.getInputStream()));
             url = stdInput.readLine();

@@ -1,4 +1,4 @@
-package com.hemendra;
+package com.hemendra.nrc;
 
 import com.sun.jna.Native;
 import com.sun.jna.platform.win32.User32;
