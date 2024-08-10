@@ -13,7 +13,7 @@ import java.net.UnknownHostException;
 public class WorkTrackUtils {
 
     public String getOsName() {
-        return System.getProperty("os.name");
+        return System.getProperty("os.name").toLowerCase();
     }
 
     public String getOsVersion() {

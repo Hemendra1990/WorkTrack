@@ -1,15 +1,43 @@
 package com.hemendra.activity.browser;
 
-import com.sun.jna.Native;
-import com.sun.jna.platform.win32.User32;
-import com.sun.jna.platform.win32.WinDef;
+import com.hemendra.activity.apptracker.AppUsageTracker;
+import com.hemendra.activity.apptracker.AppUsageTrackerFactory;
+import com.hemendra.activity.apptracker.BrowserTracker;
+import com.hemendra.activity.apptracker.MacOsAppUsageTracker;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.stereotype.Component;
 
-import java.io.BufferedReader;
-import java.io.InputStreamReader;
-
+@Component
+@RequiredArgsConstructor
+@Slf4j
 public class CrossPlatformAppUsageTracker {
 
-    public static void main(String[] args) {
+    private final AppUsageTrackerFactory appUsageTrackerFactory;
+
+    public void runAppUsageTracker() {
+        AppUsageTracker appUsageTracker = appUsageTrackerFactory.getOsSpecificAppUsageTracker();
+
+        while (true) {
+            String activeWindow = appUsageTracker.getActiveWindowTitle();
+            log.info("Active window: {}", activeWindow);
+            //TODO: I am focusing more on MacOS, Later we will be focusing on Windows and Linux
+            if (BrowserTracker.isBrowser(activeWindow)) {
+                if (appUsageTracker instanceof MacOsAppUsageTracker macOsAppUsageTracker) {
+                    String browserUrl = macOsAppUsageTracker.getBrowserUrl(activeWindow);
+                    log.info("Browser URL: {}", browserUrl);
+                }
+            }
+            try {
+                Thread.sleep(1000); // Check every second
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+        }
+
+    }
+
+    /*public static void main(String[] args) {
         String os = System.getProperty("os.name").toLowerCase();
 
         while (true) {
@@ -128,5 +156,5 @@ public class CrossPlatformAppUsageTracker {
             e.printStackTrace();
         }
         return url;
-    }
+    }*/
 }
