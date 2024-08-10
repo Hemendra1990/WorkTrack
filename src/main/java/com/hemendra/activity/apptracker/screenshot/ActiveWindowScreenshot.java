@@ -1,4 +1,4 @@
-package com.hemendra.activity.screenshot;
+package com.hemendra.activity.apptracker.screenshot;
 
 import com.sun.jna.platform.win32.User32;
 import com.sun.jna.platform.win32.WinDef;

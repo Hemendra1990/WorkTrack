@@ -1,5 +1,6 @@
-package com.hemendra.activity.browser;
+package com.hemendra.activity.apptracker.browser;
 
+import com.github.kwhat.jnativehook.mouse.NativeMouseMotionListener;
 import com.hemendra.activity.apptracker.AppUsageTracker;
 import com.hemendra.activity.apptracker.AppUsageTrackerFactory;
 import com.hemendra.activity.apptracker.BrowserTracker;
@@ -11,7 +12,7 @@ import org.springframework.stereotype.Component;
 @Component
 @RequiredArgsConstructor
 @Slf4j
-public class CrossPlatformAppUsageTracker {
+public class CrossPlatformAppUsageTracker implements NativeMouseMotionListener {
 
     private final AppUsageTrackerFactory appUsageTrackerFactory;
 
@@ -27,6 +28,11 @@ public class CrossPlatformAppUsageTracker {
                     String browserUrl = macOsAppUsageTracker.getBrowserUrl(activeWindow);
                     //log.info("Browser URL: {}", browserUrl);
                     macOsAppUsageTracker.trackWebsiteUsage(activeWindow, browserUrl);
+                }
+            } else {
+                // If not a browser, reset the tracking
+                if (appUsageTracker instanceof MacOsAppUsageTracker macOsAppUsageTracker) {
+                    macOsAppUsageTracker.resetTracking();
                 }
             }
             try {

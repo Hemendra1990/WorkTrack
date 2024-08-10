@@ -1,4 +1,4 @@
-package com.hemendra.activity.browser.detailed;
+package com.hemendra.nrc.detailed;
 
 import com.sun.jna.Native;
 import com.sun.jna.platform.win32.User32;

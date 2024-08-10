@@ -69,18 +69,22 @@ public class MacOsAppUsageTracker implements AppUsageTracker, BrowserTracker {
             }
         } else {
             // If not a browser, reset the tracking
-            if (!currentWebsite.isEmpty()) {
-                long endTime = System.currentTimeMillis();
-                long timeSpent = endTime - startTime;
-                websiteUsageMap.put(currentWebsite,
-                        websiteUsageMap.getOrDefault(currentWebsite, 0L) + timeSpent);
+            resetTracking();
+        }
+    }
 
-                log.info("Spent " + timeSpent / 1000 + " seconds on " + currentWebsite);
+    public void resetTracking() {
+        if (!currentWebsite.isEmpty()) {
+            long endTime = System.currentTimeMillis();
+            long timeSpent = endTime - startTime;
+            websiteUsageMap.put(currentWebsite,
+                    websiteUsageMap.getOrDefault(currentWebsite, 0L) + timeSpent);
 
-                // Reset current website and start time
-                currentWebsite = "";
-                startTime = 0;
-            }
+            log.info("Spent " + timeSpent / 1000 + " seconds on " + currentWebsite);
+
+            // Reset current website and start time
+            currentWebsite = "";
+            startTime = 0;
         }
     }
 }

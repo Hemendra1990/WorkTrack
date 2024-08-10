@@ -1,7 +1,7 @@
 package com.hemendra;
 
 import com.hemendra.activity.UserActivityMonitor;
-import com.hemendra.activity.browser.CrossPlatformAppUsageTracker;
+import com.hemendra.activity.apptracker.browser.CrossPlatformAppUsageTracker;
 import com.hemendra.component.WorkTrackProperties;
 import com.hemendra.config.WorkTrackConfig;
 import com.hemendra.util.BeanUtils;
