@@ -3,11 +3,18 @@ package com.hemendra.activity.apptracker;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 
+import java.awt.*;
+import java.awt.image.BufferedImage;
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
 import java.util.HashMap;
 import java.util.Map;
 
+/**
+ * @Author : Hemendra Sethi
+ * @Date : 10/08/2024
+ *
+ */
 @Component
 @Slf4j
 public class MacOsAppUsageTracker implements AppUsageTracker, BrowserTracker {
@@ -28,6 +35,13 @@ public class MacOsAppUsageTracker implements AppUsageTracker, BrowserTracker {
             e.printStackTrace();
         }
         return title;
+    }
+
+    @Override
+    public BufferedImage captureFullDesktop() throws Exception {
+        Robot robot = new Robot();
+        Rectangle screenRect = new Rectangle(Toolkit.getDefaultToolkit().getScreenSize());
+        return robot.createScreenCapture(screenRect);
     }
 
     @Override

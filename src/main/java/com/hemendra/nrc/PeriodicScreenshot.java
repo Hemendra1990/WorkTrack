@@ -1,4 +1,4 @@
-package com.hemendra.activity.apptracker.screenshot;
+package com.hemendra.nrc;
 
 import javax.imageio.ImageIO;
 import java.awt.*;

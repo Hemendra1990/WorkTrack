@@ -3,6 +3,10 @@ package com.hemendra.activity.apptracker;
 import com.hemendra.component.WorkTrackProperties;
 import com.hemendra.util.BeanUtils;
 
+/**
+ * @Author : Hemendra Sethi
+ * @Date : 10/08/2024
+ */
 public interface BrowserTracker {
     String getBrowserUrl(String activeWindow);
 

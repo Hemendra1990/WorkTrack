@@ -1,5 +1,12 @@
 package com.hemendra.activity.apptracker.screenshot;
 
+import com.hemendra.activity.apptracker.AppUsageTracker;
+import com.hemendra.activity.apptracker.AppUsageTrackerFactory;
+import com.hemendra.component.WorkTrackProperties;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.stereotype.Component;
+
 import javax.imageio.ImageIO;
 import java.awt.*;
 import java.awt.image.BufferedImage;
@@ -9,51 +16,43 @@ import java.io.InputStreamReader;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
-public class CrossPlatformScreenshotTaker {
+/**
+ * @Author : Hemendra Sethi
+ * @Date : 10/08/2024
+ */
 
-    public static void main(String[] args) {
-        int interval = 60000; // 1 minute interval
+@Component
+@RequiredArgsConstructor
+@Slf4j
+public class CrossPlatformScreenshotTaker {
+    private final AppUsageTrackerFactory appUsageTrackerFactory;
+    private final WorkTrackProperties workTrackProperties;
+
+    public void runAppScreenshotTaker() throws Exception {
+        AppUsageTracker appUsageTracker = appUsageTrackerFactory.getOsSpecificAppUsageTracker();
 
         while (true) {
+            BufferedImage image = appUsageTracker.captureFullDesktop();
+            if (image != null) {
+                saveScreenshot(image);
+            } else {
+                log.info("Unable to capture the screen.");
+            }
             try {
-                takeFullDesktopScreenshotWithActiveWindowInfo();
-                Thread.sleep(interval); // Wait for the specified interval
+                Thread.sleep(workTrackProperties.getScreenshotIntervalInMillis()); // Check every second
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }
         }
     }
 
-    public static void takeFullDesktopScreenshotWithActiveWindowInfo() {
-        try {
-            String osName = System.getProperty("os.name").toLowerCase();
-            BufferedImage image = null;
-
-            if (osName.contains("win") || osName.contains("nix") || osName.contains("nux")) {
-                image = captureFullDesktop();
-            } else if (osName.contains("mac")) {
-                image = captureFullDesktop();
-                String activeWindowName = getMacOSActiveWindowName();
-                System.out.println("Active Window: " + activeWindowName);
-            }
-
-            if (image != null) {
-                saveScreenshot(image);
-            } else {
-                System.out.println("Unable to capture the screen.");
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-    }
-
-    private static BufferedImage captureFullDesktop() throws Exception {
+    private BufferedImage captureFullDesktop() throws Exception {
         Robot robot = new Robot();
         Rectangle screenRect = new Rectangle(Toolkit.getDefaultToolkit().getScreenSize());
         return robot.createScreenCapture(screenRect);
     }
 
-    private static String getMacOSActiveWindowName() throws Exception {
+    private String getMacOSActiveWindowName() throws Exception {
         String[] cmd = {"osascript", "-e", "tell application \"System Events\" to name of application processes whose frontmost is true"};
         Process proc = Runtime.getRuntime().exec(cmd);
         BufferedReader stdInput = new BufferedReader(new InputStreamReader(proc.getInputStream()));
@@ -61,17 +60,17 @@ public class CrossPlatformScreenshotTaker {
         return line != null ? line : "Unknown";
     }
 
-    private static void saveScreenshot(BufferedImage image) throws Exception {
+    private void saveScreenshot(BufferedImage image) throws Exception {
         String format = "png";
         String fileName = getTimestamp() + "." + format;
         File file = new File("screenshots/" + fileName);
         file.getParentFile().mkdirs(); // Create directories if they don't exist
         ImageIO.write(image, format, file);
 
-        System.out.println("A screenshot was saved as: " + file.getAbsolutePath());
+        log.info("A screenshot was saved as: " + file.getAbsolutePath());
     }
 
-    private static String getTimestamp() {
+    private String getTimestamp() {
         SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMdd_HHmmss");
         return sdf.format(new Date());
     }

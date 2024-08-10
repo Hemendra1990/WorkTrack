@@ -7,6 +7,11 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+/**
+ * @Author : Hemendra Sethi
+ * @Date : 10/08/2024
+ *
+ */
 @Component
 public class WorkTrackProperties {
     private final String appName;
@@ -14,16 +19,19 @@ public class WorkTrackProperties {
     private final int idleThresholdSeconds;
     private final boolean mouseMovementMonitorEnabled;
     private final List<String> monitoringBrowsers;
+    private int screenshotIntervalInMillis;
 
     public WorkTrackProperties(@Value("${wt.app-name}") String appName,
                                @Value("${wt.app-version}") String appVersion,
                                @Value("${wt.idle-threshold.seconds}") int idleThresholdSeconds,
                                @Value("${wt.monitoring.mouse-movement.enabled}") boolean mouseMovementMonitorEnabled,
-                               @Value("${wt.monitoring.browsers}") String monitoringBrowsers) {
+                               @Value("${wt.monitoring.browsers}") String monitoringBrowsers,
+                               @Value("${wt.monitoring.screenshot.interval}") int screenshotIntervalInMillis) {
         this.appName = appName;
         this.appVersion = appVersion;
         this.idleThresholdSeconds = idleThresholdSeconds;
         this.mouseMovementMonitorEnabled = mouseMovementMonitorEnabled;
+        this.screenshotIntervalInMillis = screenshotIntervalInMillis;
 
         if (monitoringBrowsers.contains(",")) {
             this.monitoringBrowsers = Arrays.stream(monitoringBrowsers.split(",")).map(String::trim).toList();
@@ -50,5 +58,9 @@ public class WorkTrackProperties {
 
     public List<String> getMonitoringBrowsers() {
         return new ArrayList<>(monitoringBrowsers);
+    }
+
+    public int getScreenshotIntervalInMillis() {
+        return screenshotIntervalInMillis;
     }
 }

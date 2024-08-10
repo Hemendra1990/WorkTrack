@@ -2,9 +2,15 @@ package com.hemendra.activity.apptracker;
 
 import org.springframework.stereotype.Component;
 
+import java.awt.*;
+import java.awt.image.BufferedImage;
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
 
+/**
+ * @Author : Hemendra Sethi
+ * @Date : 10/08/2024
+ */
 @Component
 public class LinuxAppUsageTracker implements AppUsageTracker {
     @Override
@@ -33,5 +39,12 @@ public class LinuxAppUsageTracker implements AppUsageTracker {
             e.printStackTrace();
         }
         return title;
+    }
+
+    @Override
+    public BufferedImage captureFullDesktop() throws Exception {
+        Robot robot = new Robot();
+        Rectangle screenRect = new Rectangle(Toolkit.getDefaultToolkit().getScreenSize());
+        return robot.createScreenCapture(screenRect);
     }
 }
