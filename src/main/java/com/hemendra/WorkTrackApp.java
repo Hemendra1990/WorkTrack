@@ -9,10 +9,10 @@ import org.springframework.context.annotation.AnnotationConfigApplicationContext
 @Slf4j
 public class WorkTrackApp {
     public static void main(String[] args) {
-        start();
+        WorkTrackApp.run();
     }
 
-    private static void start() {
+    private static void run() {
         AnnotationConfigApplicationContext workTrackAppContext = new AnnotationConfigApplicationContext();
         workTrackAppContext.register(WorkTrackConfig.class);
         workTrackAppContext.refresh();
