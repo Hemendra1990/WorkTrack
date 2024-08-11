@@ -15,11 +15,11 @@ import org.springframework.context.annotation.AnnotationConfigApplicationContext
  */
 @Slf4j
 public class WorkTrackApp {
-    public static void main(String[] args) {
+    public static void main(String[] args) throws InterruptedException {
         WorkTrackApp.run();
     }
 
-    private static void run() {
+    private static void run() throws InterruptedException {
         AnnotationConfigApplicationContext workTrackAppContext = new AnnotationConfigApplicationContext();
         workTrackAppContext.register(WorkTrackConfig.class);
         workTrackAppContext.refresh();
@@ -27,7 +27,7 @@ public class WorkTrackApp {
         WorkTrackProperties workTrackProperties = workTrackAppContext.getBean(WorkTrackProperties.class);
         log.info("Starting {} version {}", workTrackProperties.getAppName(), workTrackProperties.getAppVersion());
 
-        Thread.ofVirtual().start(() -> {
+        Thread userActivityMonitor = Thread.ofVirtual().start(() -> {
             UserActivityMonitor activityMonitor = workTrackAppContext.getBean(UserActivityMonitor.class);
             activityMonitor.startMonitoring();
         });
@@ -46,12 +46,6 @@ public class WorkTrackApp {
             }
         });
 
-        while (true) {
-            try {
-                Thread.sleep(1000);  // Check every second
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
-        }
+        userActivityMonitor.join();
     }
 }
