@@ -7,14 +7,14 @@ import com.github.kwhat.jnativehook.mouse.NativeMouseEvent;
 import com.github.kwhat.jnativehook.mouse.NativeMouseListener;
 import com.github.kwhat.jnativehook.mouse.NativeMouseMotionListener;
 import com.hemendra.component.WorkTrackProperties;
+import com.hemendra.dto.UserActivityDto;
+import com.hemendra.enums.ActivityType;
+import com.hemendra.http.WTHttpClient;
 import com.hemendra.util.WorkTrackUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import java.sql.PreparedStatement;
-import java.sql.SQLException;
-import java.sql.Timestamp;
 import java.time.LocalDateTime;
 
 /**
@@ -29,6 +29,8 @@ public class UserActivityMonitor implements NativeKeyListener, NativeMouseListen
     private WorkTrackProperties workTrackProperties;
     @Autowired
     private WorkTrackUtils workTrackUtils;
+    @Autowired
+    private WTHttpClient wtHttpClient;
 
     public UserActivityMonitor() {
         this.lastActivityTime = LocalDateTime.now();
@@ -72,14 +74,14 @@ public class UserActivityMonitor implements NativeKeyListener, NativeMouseListen
             isIdle = true;
             idleStartTime = currentTime;
             log.debug("User went idle at: " + idleStartTime);
-            saveActivityLog("IDLE", lastActivityTime, idleStartTime, idleDuration);
+            saveActivityLog(ActivityType.IDLE, lastActivityTime, idleStartTime, idleDuration);
         } else if (isIdle && idleDuration < workTrackProperties.getIdleThresholdSeconds()) {
             // Transition from idle to active
             isIdle = false;
             log.debug("User resumed activity at: " + currentTime);
             log.debug("User was idle for: " + idleDuration + " seconds.");
             lastActivityTime = currentTime;  // Reset last activity time
-            saveActivityLog("ACTIVE", idleStartTime, currentTime, idleDuration);
+            saveActivityLog(ActivityType.ACTIVE, idleStartTime, currentTime, idleDuration);
         }
     }
 
@@ -118,17 +120,26 @@ public class UserActivityMonitor implements NativeKeyListener, NativeMouseListen
             long idleDuration = java.time.Duration.between(idleStartTime, currentTime).getSeconds();
             log.debug("User was idle for: {} seconds.", idleDuration);
             isIdle = false;
-            saveActivityLog("ACTIVE", idleStartTime, currentTime, idleDuration);
+            saveActivityLog(ActivityType.ACTIVE, idleStartTime, currentTime, idleDuration);
         }
         lastActivityTime = currentTime;
     }
 
-    private void saveActivityLog(String activityType, LocalDateTime startTime, LocalDateTime endTime, long duration) {
+    private void saveActivityLog(ActivityType activityType, LocalDateTime startTime, LocalDateTime endTime, long duration) {
         String userName = workTrackUtils.getUserName();
         String macAddress = workTrackUtils.getMacAddress();
 
         log.debug("Saving activity log to the database. User: {}, MAC address: {}, Activity type: {}, Start time: {}, End time: {}, Duration: {} seconds.",
                 userName, macAddress, activityType, startTime, endTime, duration);
+        UserActivityDto userActivityDto = new UserActivityDto();
+        userActivityDto.setUserName(userName);
+        userActivityDto.setMacAddress(macAddress);
+        userActivityDto.setActivityType(activityType);
+        userActivityDto.setStartTime(startTime);
+        userActivityDto.setEndTime(endTime);
+        userActivityDto.setDuration(duration);
+
+        wtHttpClient.logUserActivity(userActivityDto);
 
         /*String insertSQL = "INSERT INTO user_activity_log (user_id, session_id, activity_type, activity_start_time, activity_end_time, duration_seconds, created_at) VALUES (?, ?, ?, ?, ?, ?, ?)";
 

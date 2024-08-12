@@ -10,7 +10,6 @@ import java.util.List;
 /**
  * @Author : Hemendra Sethi
  * @Date : 10/08/2024
- *
  */
 @Component
 public class WorkTrackProperties {
@@ -19,19 +18,22 @@ public class WorkTrackProperties {
     private final int idleThresholdSeconds;
     private final boolean mouseMovementMonitorEnabled;
     private final List<String> monitoringBrowsers;
-    private int screenshotIntervalInMillis;
+    private final int screenshotIntervalInMillis;
+    private final String serverUserActivityUrl;
 
     public WorkTrackProperties(@Value("${wt.app-name}") String appName,
                                @Value("${wt.app-version}") String appVersion,
                                @Value("${wt.idle-threshold.seconds}") int idleThresholdSeconds,
                                @Value("${wt.monitoring.mouse-movement.enabled}") boolean mouseMovementMonitorEnabled,
                                @Value("${wt.monitoring.browsers}") String monitoringBrowsers,
-                               @Value("${wt.monitoring.screenshot.interval}") int screenshotIntervalInMillis) {
+                               @Value("${wt.monitoring.screenshot.interval}") int screenshotIntervalInMillis,
+                               @Value("${wt.monitoring.server.user-activity.url}") String serverUserActivityUrl) {
         this.appName = appName;
         this.appVersion = appVersion;
         this.idleThresholdSeconds = idleThresholdSeconds;
         this.mouseMovementMonitorEnabled = mouseMovementMonitorEnabled;
         this.screenshotIntervalInMillis = screenshotIntervalInMillis;
+        this.serverUserActivityUrl = serverUserActivityUrl;
 
         if (monitoringBrowsers.contains(",")) {
             this.monitoringBrowsers = Arrays.stream(monitoringBrowsers.split(",")).map(String::trim).toList();
@@ -62,5 +64,9 @@ public class WorkTrackProperties {
 
     public int getScreenshotIntervalInMillis() {
         return screenshotIntervalInMillis;
+    }
+
+    public String getServerUserActivityUrl() {
+        return serverUserActivityUrl.trim();
     }
 }
