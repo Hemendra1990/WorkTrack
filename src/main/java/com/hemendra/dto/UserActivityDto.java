@@ -1,9 +1,11 @@
 package com.hemendra.dto;
 
+import com.hemendra.enums.ActivityState;
 import com.hemendra.enums.ActivityType;
 import lombok.Data;
 
 import java.time.LocalDateTime;
+import java.util.UUID;
 
 @Data
 public class UserActivityDto {
@@ -14,4 +16,6 @@ public class UserActivityDto {
     LocalDateTime startTime;
     LocalDateTime endTime;
     Long duration;
+    UUID sessionId;
+    ActivityState state;
 }

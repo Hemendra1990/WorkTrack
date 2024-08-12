@@ -8,14 +8,17 @@ import com.github.kwhat.jnativehook.mouse.NativeMouseListener;
 import com.github.kwhat.jnativehook.mouse.NativeMouseMotionListener;
 import com.hemendra.component.WorkTrackProperties;
 import com.hemendra.dto.UserActivityDto;
+import com.hemendra.enums.ActivityState;
 import com.hemendra.enums.ActivityType;
 import com.hemendra.http.WTHttpClient;
 import com.hemendra.util.WorkTrackUtils;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import java.time.LocalDateTime;
+import java.util.UUID;
 
 /**
  * @Author : Hemendra Sethi
@@ -23,7 +26,7 @@ import java.time.LocalDateTime;
  */
 @Slf4j
 @Component
-public class UserActivityMonitor implements NativeKeyListener, NativeMouseListener, NativeMouseMotionListener {
+public class UserActivityMonitor implements NativeKeyListener, NativeMouseListener, NativeMouseMotionListener, InitializingBean {
 
     @Autowired
     private WorkTrackProperties workTrackProperties;
@@ -32,14 +35,18 @@ public class UserActivityMonitor implements NativeKeyListener, NativeMouseListen
     @Autowired
     private WTHttpClient wtHttpClient;
 
-    public UserActivityMonitor() {
-        this.lastActivityTime = LocalDateTime.now();
-        log.info("Checking idle time {} - {}", Thread.currentThread().getName(), lastActivityTime);
-    }
-
     private LocalDateTime lastActivityTime;
     private LocalDateTime idleStartTime;
+    private LocalDateTime userInitialStartTime; //when the program starts
     private boolean isIdle = false;
+    private static UUID sessionId;
+
+    public UserActivityMonitor() {
+        this.lastActivityTime = LocalDateTime.now();
+        this.userInitialStartTime = LocalDateTime.now();
+        sessionId = UUID.randomUUID();
+        log.info("Checking idle time {} - {}", Thread.currentThread().getName(), lastActivityTime);
+    }
 
 
     public void startMonitoring() {
@@ -70,18 +77,22 @@ public class UserActivityMonitor implements NativeKeyListener, NativeMouseListen
         long idleDuration = java.time.Duration.between(this.lastActivityTime, currentTime).getSeconds();
 
         if (!isIdle && idleDuration >= workTrackProperties.getIdleThresholdSeconds()) {
+            log.debug("User was active for: " + idleDuration + " seconds.");
+            saveActivityLog(ActivityType.ACTIVE, null, currentTime, 0, sessionId, ActivityState.END); //for the same session id the users was active for.....
             // Transition from active to idle
             isIdle = true;
             idleStartTime = currentTime;
             log.debug("User went idle at: " + idleStartTime);
-            saveActivityLog(ActivityType.IDLE, lastActivityTime, idleStartTime, idleDuration);
+            //Enter into idle state
+            sessionId = UUID.randomUUID();
+            saveActivityLog(ActivityType.IDLE, idleStartTime, null, 0, sessionId, ActivityState.START);
         } else if (isIdle && idleDuration < workTrackProperties.getIdleThresholdSeconds()) {
             // Transition from idle to active
             isIdle = false;
             log.debug("User resumed activity at: " + currentTime);
             log.debug("User was idle for: " + idleDuration + " seconds.");
             lastActivityTime = currentTime;  // Reset last activity time
-            saveActivityLog(ActivityType.ACTIVE, idleStartTime, currentTime, idleDuration);
+            saveActivityLog(ActivityType.ACTIVE, idleStartTime, currentTime, idleDuration, sessionId, ActivityState.START);
         }
     }
 
@@ -118,14 +129,16 @@ public class UserActivityMonitor implements NativeKeyListener, NativeMouseListen
         if (isIdle) {
             log.debug("User resumed activity at: {}", currentTime);
             long idleDuration = java.time.Duration.between(idleStartTime, currentTime).getSeconds();
+            saveActivityLog(ActivityType.IDLE, null, currentTime, idleDuration, sessionId, ActivityState.END);
             log.debug("User was idle for: {} seconds.", idleDuration);
             isIdle = false;
-            saveActivityLog(ActivityType.ACTIVE, idleStartTime, currentTime, idleDuration);
+            sessionId = UUID.randomUUID();
+            saveActivityLog(ActivityType.ACTIVE, currentTime, null, 0, sessionId, ActivityState.START);
         }
         lastActivityTime = currentTime;
     }
 
-    private void saveActivityLog(ActivityType activityType, LocalDateTime startTime, LocalDateTime endTime, long duration) {
+    private void saveActivityLog(ActivityType activityType, LocalDateTime startTime, LocalDateTime endTime, long duration, UUID sessionId, ActivityState state) {
         String userName = workTrackUtils.getUserName();
         String macAddress = workTrackUtils.getMacAddress();
 
@@ -133,32 +146,20 @@ public class UserActivityMonitor implements NativeKeyListener, NativeMouseListen
                 userName, macAddress, activityType, startTime, endTime, duration);
         UserActivityDto userActivityDto = new UserActivityDto();
         userActivityDto.setUserName(userName);
+        userActivityDto.setUserName("subrat");//TODO: remove this before commit
         userActivityDto.setMacAddress(macAddress);
         userActivityDto.setActivityType(activityType);
         userActivityDto.setStartTime(startTime);
         userActivityDto.setEndTime(endTime);
         userActivityDto.setDuration(duration);
+        userActivityDto.setSessionId(sessionId);
+        userActivityDto.setState(state);
 
         wtHttpClient.logUserActivity(userActivityDto);
+    }
 
-        /*String insertSQL = "INSERT INTO user_activity_log (user_id, session_id, activity_type, activity_start_time, activity_end_time, duration_seconds, created_at) VALUES (?, ?, ?, ?, ?, ?, ?)";
-
-        try (Connection conn = DatabaseConnection.getConnection();
-             PreparedStatement pstmt = conn.prepareStatement(insertSQL)) {
-
-            pstmt.setString(1, "user123"); // Replace with actual user ID
-            pstmt.setString(2, "session456"); // Replace with actual session ID
-            pstmt.setString(3, activityType);
-            pstmt.setTimestamp(4, Timestamp.valueOf(startTime));
-            pstmt.setTimestamp(5, Timestamp.valueOf(endTime));
-            pstmt.setLong(6, duration);
-            pstmt.setTimestamp(7, Timestamp.valueOf(LocalDateTime.now()));
-
-            pstmt.executeUpdate();
-            log.debug("Activity log saved to the database.");
-
-        } catch (SQLException e) {
-            log.error("Failed to save activity log to the database.", e);
-        }*/
+    @Override
+    public void afterPropertiesSet() throws Exception {
+        saveActivityLog(ActivityType.ACTIVE, userInitialStartTime, null, 0, sessionId, ActivityState.START);
     }
 }

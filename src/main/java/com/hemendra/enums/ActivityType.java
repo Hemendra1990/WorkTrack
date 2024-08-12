@@ -2,6 +2,7 @@ package com.hemendra.enums;
 
 public enum ActivityType {
     ACTIVE("ACTIVE"),
+    STARTED("STARTED"),
     IDLE("IDLE");
 
     private String type;
