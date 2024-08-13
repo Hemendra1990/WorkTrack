@@ -21,6 +21,7 @@ public class WorkTrackProperties {
     private final int screenshotIntervalInMillis;
     private final String serverUserActivityUrl;
     private final String serverUserScreenshotUploadUrl;
+    private final String serverUserWebsiteActivityUrl;
 
     public WorkTrackProperties(@Value("${wt.app-name}") String appName,
                                @Value("${wt.app-version}") String appVersion,
@@ -29,7 +30,8 @@ public class WorkTrackProperties {
                                @Value("${wt.monitoring.browsers}") String monitoringBrowsers,
                                @Value("${wt.monitoring.screenshot.interval}") int screenshotIntervalInMillis,
                                @Value("${wt.monitoring.server.user-activity.url}") String serverUserActivityUrl,
-                               @Value("${wt.monitoring.server.user-screenshot.url}") String serverUserScreenshotUploadUrl) {
+                               @Value("${wt.monitoring.server.user-screenshot.url}") String serverUserScreenshotUploadUrl,
+                               @Value("${wt.monitoring.server.user-website-activity.url}") String serverUserWebsiteActivityUrl) {
         this.appName = appName;
         this.appVersion = appVersion;
         this.idleThresholdSeconds = idleThresholdSeconds;
@@ -37,6 +39,7 @@ public class WorkTrackProperties {
         this.screenshotIntervalInMillis = screenshotIntervalInMillis;
         this.serverUserActivityUrl = serverUserActivityUrl;
         this.serverUserScreenshotUploadUrl = serverUserScreenshotUploadUrl;
+        this.serverUserWebsiteActivityUrl = serverUserWebsiteActivityUrl;
 
         if (monitoringBrowsers.contains(",")) {
             this.monitoringBrowsers = Arrays.stream(monitoringBrowsers.split(",")).map(String::trim).toList();
@@ -75,5 +78,9 @@ public class WorkTrackProperties {
 
     public String getServerUserScreenshotUploadUrl() {
         return serverUserScreenshotUploadUrl.trim();
+    }
+
+    public String getServerUserWebsiteActivityUrl() {
+        return serverUserWebsiteActivityUrl;
     }
 }

@@ -3,6 +3,7 @@ package com.hemendra.http;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.hemendra.component.WorkTrackProperties;
 import com.hemendra.dto.UserActivityDto;
+import com.hemendra.dto.UserWebsiteActivityDto;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.hc.client5.http.classic.methods.HttpPost;
 import org.apache.hc.client5.http.entity.mime.FileBody;
@@ -38,6 +39,27 @@ public class WTHttpClient {
         try (CloseableHttpClient client = HttpClients.createDefault()) {
             String requestJson = objectMapper.writeValueAsString(activityDto);
             HttpPost httpPost = new HttpPost(workTrackProperties.getServerUserActivityUrl());
+            StringEntity entity = new StringEntity(requestJson);
+            httpPost.setEntity(entity);
+            httpPost.setHeader("Content-Type", "application/json");
+
+            // Execute the request
+            try (CloseableHttpResponse response = client.execute(httpPost)) {
+                String responseBody = EntityUtils.toString(response.getEntity());
+                log.info("Response status code: {}", response.getCode());
+                log.info("Response body: {}", responseBody);
+            } catch (ParseException e) {
+                throw new RuntimeException(e);
+            }
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    public void logUserWebsiteActivity(UserWebsiteActivityDto websiteActivityDto) {
+        try (CloseableHttpClient client = HttpClients.createDefault()) {
+            String requestJson = objectMapper.writeValueAsString(websiteActivityDto);
+            HttpPost httpPost = new HttpPost(workTrackProperties.getServerUserWebsiteActivityUrl());
             StringEntity entity = new StringEntity(requestJson);
             httpPost.setEntity(entity);
             httpPost.setHeader("Content-Type", "application/json");

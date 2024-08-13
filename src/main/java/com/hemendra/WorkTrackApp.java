@@ -1,7 +1,7 @@
 package com.hemendra;
 
 import com.hemendra.activity.UserActivityMonitor;
-import com.hemendra.activity.apptracker.browser.CrossPlatformAppUsageTracker;
+import com.hemendra.activity.apptracker.browser.CrossPlatformBrowserAppUsageTracker;
 import com.hemendra.activity.apptracker.screenshot.CrossPlatformScreenshotTaker;
 import com.hemendra.component.WorkTrackProperties;
 import com.hemendra.config.WorkTrackConfig;
@@ -33,7 +33,7 @@ public class WorkTrackApp {
         });
 
         Thread.ofVirtual().start(() -> {
-            CrossPlatformAppUsageTracker appUsageTracker = BeanUtils.getBean(CrossPlatformAppUsageTracker.class);
+            CrossPlatformBrowserAppUsageTracker appUsageTracker = BeanUtils.getBean(CrossPlatformBrowserAppUsageTracker.class);
             appUsageTracker.runAppUsageTracker();
         });
 

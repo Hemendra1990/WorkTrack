@@ -16,7 +16,7 @@ import org.springframework.stereotype.Component;
 @Component
 @RequiredArgsConstructor
 @Slf4j
-public class CrossPlatformAppUsageTracker implements NativeMouseMotionListener {
+public class CrossPlatformBrowserAppUsageTracker implements NativeMouseMotionListener {
 
     private final AppUsageTrackerFactory appUsageTrackerFactory;
 
@@ -35,7 +35,7 @@ public class CrossPlatformAppUsageTracker implements NativeMouseMotionListener {
             } else {
                 // If not a browser, reset the tracking
                 if (appUsageTracker instanceof MacOsAppUsageTracker macOsAppUsageTracker) {
-                    macOsAppUsageTracker.resetTracking();
+                    macOsAppUsageTracker.resetTracking(null, null);
                 }
             }
             try {

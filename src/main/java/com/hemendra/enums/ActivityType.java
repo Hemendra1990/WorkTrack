@@ -3,7 +3,8 @@ package com.hemendra.enums;
 public enum ActivityType {
     ACTIVE("ACTIVE"),
     STARTED("STARTED"),
-    IDLE("IDLE");
+    IDLE("IDLE"),
+    BROWSING("BROWSING");
 
     private String type;
 
