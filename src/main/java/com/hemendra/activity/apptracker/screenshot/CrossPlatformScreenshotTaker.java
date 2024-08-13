@@ -3,6 +3,8 @@ package com.hemendra.activity.apptracker.screenshot;
 import com.hemendra.activity.apptracker.AppUsageTracker;
 import com.hemendra.activity.apptracker.AppUsageTrackerFactory;
 import com.hemendra.component.WorkTrackProperties;
+import com.hemendra.http.WTHttpClient;
+import com.hemendra.util.WorkTrackUtils;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
@@ -29,6 +31,8 @@ import java.util.Date;
 public class CrossPlatformScreenshotTaker {
     private final AppUsageTrackerFactory appUsageTrackerFactory;
     private final WorkTrackProperties workTrackProperties;
+    private final WTHttpClient wtHttpClient;
+    private final WorkTrackUtils workTrackUtils;
 
     public void runAppScreenshotTaker() throws Exception {
         AppUsageTracker appUsageTracker = appUsageTrackerFactory.getOsSpecificAppUsageTracker();
@@ -56,6 +60,8 @@ public class CrossPlatformScreenshotTaker {
         //ImageIO.write(image, format, file);
         compressImage(image, file, 0.2f);
         log.info("A screenshot was saved as: " + file.getAbsolutePath());
+        wtHttpClient.uploadScreenshot(file, workTrackUtils.getUserName());
+
     }
 
     public static void compressImage(BufferedImage image, File outputFile, float quality) throws IOException {

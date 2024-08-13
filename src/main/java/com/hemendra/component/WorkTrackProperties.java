@@ -20,6 +20,7 @@ public class WorkTrackProperties {
     private final List<String> monitoringBrowsers;
     private final int screenshotIntervalInMillis;
     private final String serverUserActivityUrl;
+    private final String serverUserScreenshotUploadUrl;
 
     public WorkTrackProperties(@Value("${wt.app-name}") String appName,
                                @Value("${wt.app-version}") String appVersion,
@@ -27,13 +28,15 @@ public class WorkTrackProperties {
                                @Value("${wt.monitoring.mouse-movement.enabled}") boolean mouseMovementMonitorEnabled,
                                @Value("${wt.monitoring.browsers}") String monitoringBrowsers,
                                @Value("${wt.monitoring.screenshot.interval}") int screenshotIntervalInMillis,
-                               @Value("${wt.monitoring.server.user-activity.url}") String serverUserActivityUrl) {
+                               @Value("${wt.monitoring.server.user-activity.url}") String serverUserActivityUrl,
+                               @Value("${wt.monitoring.server.user-screenshot.url}") String serverUserScreenshotUploadUrl) {
         this.appName = appName;
         this.appVersion = appVersion;
         this.idleThresholdSeconds = idleThresholdSeconds;
         this.mouseMovementMonitorEnabled = mouseMovementMonitorEnabled;
         this.screenshotIntervalInMillis = screenshotIntervalInMillis;
         this.serverUserActivityUrl = serverUserActivityUrl;
+        this.serverUserScreenshotUploadUrl = serverUserScreenshotUploadUrl;
 
         if (monitoringBrowsers.contains(",")) {
             this.monitoringBrowsers = Arrays.stream(monitoringBrowsers.split(",")).map(String::trim).toList();
@@ -68,5 +71,9 @@ public class WorkTrackProperties {
 
     public String getServerUserActivityUrl() {
         return serverUserActivityUrl.trim();
+    }
+
+    public String getServerUserScreenshotUploadUrl() {
+        return serverUserScreenshotUploadUrl.trim();
     }
 }
