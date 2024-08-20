@@ -49,10 +49,10 @@ public class WTHttpClient {
                 log.info("Response status code: {}", response.getCode());
                 log.info("Response body: {}", responseBody);
             } catch (ParseException e) {
-                throw new RuntimeException(e);
+                log.error("Error parsing response: {}", e.getMessage());
             }
         } catch (IOException e) {
-            throw new RuntimeException(e);
+            log.error("Error logging user activity: {}", e.getMessage());
         }
     }
 
@@ -70,10 +70,10 @@ public class WTHttpClient {
                 log.info("Response status code: {}", response.getCode());
                 log.info("Response body: {}", responseBody);
             } catch (ParseException e) {
-                throw new RuntimeException(e);
+                log.error("Error parsing response: {}", e.getMessage());
             }
         } catch (IOException e) {
-            throw new RuntimeException(e);
+            log.error("Error logging user website activity: {}", e.getMessage());
         }
     }
 
@@ -102,11 +102,11 @@ public class WTHttpClient {
                     log.info("Response: {}", responseString);
                 }
             } catch (ParseException e) {
-                throw new RuntimeException(e);
+                log.error("Error parsing response: {}", e.getMessage());
             }
 
         } catch (IOException e) {
-            e.printStackTrace();
+            log.error("Error uploading screenshot: {}", e.getMessage());
         }
     }
 }

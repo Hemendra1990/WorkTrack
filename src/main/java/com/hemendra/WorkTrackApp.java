@@ -42,7 +42,7 @@ public class WorkTrackApp {
             try {
                 screenshotTaker.runAppScreenshotTaker();
             } catch (Exception e) {
-                e.printStackTrace();
+                log.error("Error while taking screenshot: {}", e.getMessage());
             }
         });
 

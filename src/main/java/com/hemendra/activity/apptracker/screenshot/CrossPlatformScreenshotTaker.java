@@ -47,7 +47,7 @@ public class CrossPlatformScreenshotTaker {
             try {
                 Thread.sleep(workTrackProperties.getScreenshotIntervalInMillis()); // Check every second
             } catch (InterruptedException e) {
-                e.printStackTrace();
+                log.error("Error while taking screenshot: {}", e.getMessage());
             }
         }
     }

@@ -62,11 +62,11 @@ public class UserActivityMonitor implements NativeKeyListener, NativeMouseListen
                 try {
                     Thread.sleep(1000);  // Check every second
                 } catch (InterruptedException e) {
-                    e.printStackTrace();
+                    log.error("Error while checking idle time: {}", e.getMessage());
                 }
             }
         } catch (Exception e) {
-            e.printStackTrace();
+            log.error("Error while checking idle time: {}", e.getMessage());
         }
 
     }

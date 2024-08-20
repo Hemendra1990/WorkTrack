@@ -50,7 +50,7 @@ public class CrossPlatformBrowserAppUsageTracker implements NativeMouseMotionLis
             try {
                 Thread.sleep(1000); // Check every second
             } catch (InterruptedException e) {
-                e.printStackTrace();
+                log.error("Error while checking idle time: {}", e.getMessage());
             }
         }
 
