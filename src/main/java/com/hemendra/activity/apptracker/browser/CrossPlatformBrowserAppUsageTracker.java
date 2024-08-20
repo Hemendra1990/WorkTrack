@@ -1,10 +1,7 @@
 package com.hemendra.activity.apptracker.browser;
 
 import com.github.kwhat.jnativehook.mouse.NativeMouseMotionListener;
-import com.hemendra.activity.apptracker.AppUsageTracker;
-import com.hemendra.activity.apptracker.AppUsageTrackerFactory;
-import com.hemendra.activity.apptracker.BrowserTracker;
-import com.hemendra.activity.apptracker.MacOsAppUsageTracker;
+import com.hemendra.activity.apptracker.*;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
@@ -20,22 +17,34 @@ public class CrossPlatformBrowserAppUsageTracker implements NativeMouseMotionLis
 
     private final AppUsageTrackerFactory appUsageTrackerFactory;
 
+    private static String currentActiveWindow = "";
+
     public void runAppUsageTracker() {
         AppUsageTracker appUsageTracker = appUsageTrackerFactory.getOsSpecificAppUsageTracker();
 
         while (true) {
             String activeWindow = appUsageTracker.getActiveWindowTitle();
-            /*log.info("Active window: {}", activeWindow);*/
-            //TODO: I am focusing more on MacOS, Later we will be focusing on Windows and Linux
-            if (BrowserTracker.isBrowser(activeWindow)) {
-                if (appUsageTracker instanceof MacOsAppUsageTracker macOsAppUsageTracker) {
-                    String browserUrl = macOsAppUsageTracker.getBrowserUrl(activeWindow);
-                    macOsAppUsageTracker.trackWebsiteUsage(activeWindow, browserUrl);
-                }
-            } else {
-                // If not a browser, reset the tracking
-                if (appUsageTracker instanceof MacOsAppUsageTracker macOsAppUsageTracker) {
-                    macOsAppUsageTracker.resetTracking(null, null);
+
+            if (!currentActiveWindow.equalsIgnoreCase(activeWindow)) {
+                currentActiveWindow = activeWindow;
+
+                if (BrowserTracker.isBrowser(activeWindow)) {
+                    if (appUsageTracker instanceof MacOsAppUsageTracker macOsAppUsageTracker) {
+                        String browserUrl = macOsAppUsageTracker.getBrowserUrl(activeWindow);
+                        macOsAppUsageTracker.trackWebsiteUsage(activeWindow, browserUrl);
+                    } else if (appUsageTracker instanceof WindowsAppUsageTracker windowsAppUsageTracker) {
+                        String browserUrl = windowsAppUsageTracker.getBrowserUrl(activeWindow);
+                        windowsAppUsageTracker.trackWebsiteUsage(activeWindow, browserUrl);
+                    }
+                } else {
+                    // If not a browser, reset the tracking
+                    if (appUsageTracker instanceof MacOsAppUsageTracker macOsAppUsageTracker) {
+                        macOsAppUsageTracker.resetTracking(null, null);
+                    }
+
+                    if (appUsageTracker instanceof WindowsAppUsageTracker windowsAppUsageTracker) {
+                        windowsAppUsageTracker.resetTracking(null, null);
+                    }
                 }
             }
             try {

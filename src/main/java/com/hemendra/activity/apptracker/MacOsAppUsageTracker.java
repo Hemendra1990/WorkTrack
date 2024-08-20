@@ -1,8 +1,5 @@
 package com.hemendra.activity.apptracker;
 
-import com.hemendra.dto.UserWebsiteActivityDto;
-import com.hemendra.enums.ActivityState;
-import com.hemendra.enums.ActivityType;
 import com.hemendra.http.WTHttpClient;
 import com.hemendra.util.WorkTrackUtils;
 import lombok.extern.slf4j.Slf4j;
@@ -137,7 +134,7 @@ public class MacOsAppUsageTracker implements AppUsageTracker, BrowserTracker {
         }
     }
 
-    private void saveBrowserActivity(String activeWindow, String browserUrl, UUID sessionId, LocalDateTime startDateTime, LocalDateTime endDateTime, Long duration) {
+    /*private void saveBrowserActivity(String activeWindow, String browserUrl, UUID sessionId, LocalDateTime startDateTime, LocalDateTime endDateTime, Long duration) {
         String userName = workTrackUtils.getUserName();
         String macAddress = workTrackUtils.getMacAddress();
 
@@ -153,8 +150,9 @@ public class MacOsAppUsageTracker implements AppUsageTracker, BrowserTracker {
         userWebsiteActivityDto.setActiveWindow(activeWindow);
 
         wtHttpClient.logUserWebsiteActivity(userWebsiteActivityDto);
-    }
+    }*/
 
+    @Override
     public void resetTracking(String activeWindow, String browserUrl) {
         if (!currentWebsite.isEmpty()) {
             long endTime = System.currentTimeMillis();
