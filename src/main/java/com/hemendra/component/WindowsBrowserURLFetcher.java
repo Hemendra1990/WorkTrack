@@ -3,6 +3,7 @@ package com.hemendra.component;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 
+import javax.swing.*;
 import java.awt.*;
 import java.awt.datatransfer.Clipboard;
 import java.awt.datatransfer.DataFlavor;
@@ -15,9 +16,18 @@ import java.io.IOException;
 @Slf4j
 public class WindowsBrowserURLFetcher {
     public String fetchBrowserUrlPreservingClipboard() {
-        // Step 1: Save the current clipboard content
         Clipboard clipboard = Toolkit.getDefaultToolkit().getSystemClipboard();
         Transferable originalContent = clipboard.getContents(null);
+
+        // Check if clipboard access is available
+        if (!requestClipboardAccess()) {
+            JOptionPane.showMessageDialog(null,
+                    "Clipboard access is required. Please run the application with sufficient permissions or try again.",
+                    "Clipboard Access Required",
+                    JOptionPane.WARNING_MESSAGE);
+            return null;
+        }
+
         // Step 2: Copy the URL using Robot
         try {
             Robot robot = getBrowserUrlCopyingRobot();
@@ -27,13 +37,31 @@ public class WindowsBrowserURLFetcher {
             String url = (String) clipboard.getData(DataFlavor.stringFlavor);
             return url;
         } catch (AWTException | IOException | UnsupportedFlavorException e) {
-            log.error(e.getMessage());
+            JOptionPane.showMessageDialog(null,
+                    "Failed to access clipboard: " + e.getMessage(),
+                    "Clipboard Access Error",
+                    JOptionPane.ERROR_MESSAGE);
             return null;
         } finally {
             // Step 4: Restore the original clipboard content
             try {
                 clipboard.setContents(originalContent, null);
-            } catch (Exception e){}
+            } catch (Exception e) {
+                JOptionPane.showMessageDialog(null,
+                        "Failed to restore clipboard content: " + e.getMessage(),
+                        "Clipboard Access Error",
+                        JOptionPane.ERROR_MESSAGE);
+            }
+        }
+    }
+
+    private boolean requestClipboardAccess() {
+        try {
+            Clipboard clipboard = Toolkit.getDefaultToolkit().getSystemClipboard();
+            clipboard.getContents(null);  // Attempt to access the clipboard
+            return true;
+        } catch (IllegalStateException e) {
+            return false;
         }
     }
 
@@ -51,9 +79,6 @@ public class WindowsBrowserURLFetcher {
         robot.keyRelease(KeyEvent.VK_C);
         robot.keyRelease(KeyEvent.VK_CONTROL);
 
-        // Perform a mouse click on the page to dismiss any dropdowns
-        //robot.mouseMove(200, 200);
-        //robot.mousePress(KeyEvent.BUTTON1_DOWN_MASK);
         return robot;
     }
 
