@@ -146,7 +146,6 @@ public class UserActivityMonitor implements NativeKeyListener, NativeMouseListen
                 userName, macAddress, activityType, startTime, endTime, duration);
         UserActivityDto userActivityDto = new UserActivityDto();
         userActivityDto.setUserName(userName);
-        userActivityDto.setUserName("subrat");//TODO: remove this before commit
         userActivityDto.setMacAddress(macAddress);
         userActivityDto.setActivityType(activityType);
         userActivityDto.setStartTime(startTime);

@@ -61,7 +61,7 @@ public class CrossPlatformScreenshotTaker {
         compressImage(image, file, 0.2f);
         log.info("A screenshot was saved as: " + file.getAbsolutePath());
         wtHttpClient.uploadScreenshot(file, workTrackUtils.getUserName());
-
+        file.delete();//delete if it is successfull
     }
 
     public static void compressImage(BufferedImage image, File outputFile, float quality) throws IOException {
