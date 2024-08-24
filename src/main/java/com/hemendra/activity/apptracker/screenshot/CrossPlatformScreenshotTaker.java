@@ -1,7 +1,7 @@
 package com.hemendra.activity.apptracker.screenshot;
 
 import com.hemendra.activity.apptracker.AppUsageTracker;
-import com.hemendra.activity.apptracker.AppUsageTrackerFactory;
+import com.hemendra.activity.apptracker.trackerimpl.factory.AppUsageTrackerFactory;
 import com.hemendra.component.WorkTrackProperties;
 import com.hemendra.http.WTHttpClient;
 import com.hemendra.util.WorkTrackUtils;
@@ -14,7 +14,6 @@ import javax.imageio.ImageIO;
 import javax.imageio.ImageWriteParam;
 import javax.imageio.ImageWriter;
 import javax.imageio.stream.ImageOutputStream;
-import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.io.*;
 import java.text.SimpleDateFormat;

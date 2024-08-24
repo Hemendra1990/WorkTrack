@@ -8,12 +8,17 @@
         </encoder>
     </appender>
 
+    <!-- File Appender -->
+    <appender name="FILE" class="ch.qos.logback.core.FileAppender">
+        <file>~/logs/logback.log</file>
+        <encoder>
+            <pattern>%-5level %d{HH:mm:ss.SSS} [%thread] %logger{36} - %msg%n</pattern>
+        </encoder>
+    </appender>
+
     <!-- Set the root logging level -->
     <root level="INFO">
         <appender-ref ref="CONSOLE" />
+        <appender-ref ref="FILE" />
     </root>
-
-    <!-- Set specific logging levels for packages -->
-    <!--<logger name="com.example" level="DEBUG" />-->
-    <!--<logger name="org.springframework" level="WARN" />-->
 </configuration>

@@ -1,8 +1,8 @@
-package com.hemendra.activity.apptracker;
+package com.hemendra.activity.apptracker.trackerimpl;
 
+import com.hemendra.activity.apptracker.AppUsageTracker;
+import com.hemendra.activity.apptracker.BrowserTracker;
 import com.hemendra.component.WindowsBrowserURLFetcher;
-import com.hemendra.http.WTHttpClient;
-import com.hemendra.util.WorkTrackUtils;
 import com.sun.jna.Native;
 import com.sun.jna.platform.win32.User32;
 import com.sun.jna.platform.win32.WinDef;
@@ -12,8 +12,6 @@ import org.springframework.stereotype.Component;
 
 import java.awt.*;
 import java.awt.image.BufferedImage;
-import java.io.BufferedReader;
-import java.io.InputStreamReader;
 import java.time.Duration;
 import java.time.LocalDateTime;
 import java.util.HashMap;

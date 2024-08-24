@@ -1,9 +1,8 @@
-package com.hemendra.activity.apptracker;
+package com.hemendra.activity.apptracker.trackerimpl;
 
-import com.hemendra.http.WTHttpClient;
-import com.hemendra.util.WorkTrackUtils;
+import com.hemendra.activity.apptracker.AppUsageTracker;
+import com.hemendra.activity.apptracker.BrowserTracker;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import java.awt.*;
@@ -23,11 +22,6 @@ import java.util.UUID;
 @Component
 @Slf4j
 public class MacOsAppUsageTracker implements AppUsageTracker, BrowserTracker {
-    @Autowired
-    private WorkTrackUtils workTrackUtils;
-    @Autowired
-    private WTHttpClient wtHttpClient;
-
     private static String currentWebsite = "";
     private static Map<String, Long> websiteUsageMap = new HashMap<>();
     private static long startTime = 0;
@@ -38,12 +32,12 @@ public class MacOsAppUsageTracker implements AppUsageTracker, BrowserTracker {
     public String getActiveWindowTitle() {
         String title = "";
         try {
-            String[] cmd = {"osascript", "-e", "tell application \"System Events\" to get name of (processes where frontmost is true)"};
+            String[] cmd = {"osascript", "-e", "tell application \"System Events\" to get title of (processes where frontmost is true)"};
             Process proc = Runtime.getRuntime().exec(cmd);
             BufferedReader stdInput = new BufferedReader(new InputStreamReader(proc.getInputStream()));
             title = stdInput.readLine();
         } catch (Exception e) {
-            e.printStackTrace();
+            log.error("Error getting active window title: {}", e.getMessage());
         }
         return title;
     }
@@ -119,6 +113,7 @@ public class MacOsAppUsageTracker implements AppUsageTracker, BrowserTracker {
                     /*websiteUsageMap.put(currentWebsite,
                             websiteUsageMap.getOrDefault(currentWebsite, 0L) + timeSpent);*/
                     log.info("Spent " + timeSpent / 1000 + " seconds on " + currentWebsite);
+
                     saveBrowserActivity(activeWindow, currentWebsite, sessionId, startDateTime, LocalDateTime.now(), Duration.between(startDateTime, LocalDateTime.now()).getSeconds());
                 }
 
@@ -134,24 +129,6 @@ public class MacOsAppUsageTracker implements AppUsageTracker, BrowserTracker {
         }
     }
 
-    /*private void saveBrowserActivity(String activeWindow, String browserUrl, UUID sessionId, LocalDateTime startDateTime, LocalDateTime endDateTime, Long duration) {
-        String userName = workTrackUtils.getUserName();
-        String macAddress = workTrackUtils.getMacAddress();
-
-        UserWebsiteActivityDto userWebsiteActivityDto = new UserWebsiteActivityDto();
-        userWebsiteActivityDto.setUserName(userName);
-        userWebsiteActivityDto.setMacAddress(macAddress);
-        userWebsiteActivityDto.setActivityType(ActivityType.BROWSING);
-        userWebsiteActivityDto.setStartTime(startDateTime);
-        userWebsiteActivityDto.setEndTime(endDateTime);
-        userWebsiteActivityDto.setDuration(duration);
-        userWebsiteActivityDto.setSessionId(sessionId);
-        userWebsiteActivityDto.setUrl(browserUrl);
-        userWebsiteActivityDto.setActiveWindow(activeWindow);
-
-        wtHttpClient.logUserWebsiteActivity(userWebsiteActivityDto);
-    }*/
-
     @Override
     public void resetTracking(String activeWindow, String browserUrl) {
         if (!currentWebsite.isEmpty()) {
@@ -161,6 +138,7 @@ public class MacOsAppUsageTracker implements AppUsageTracker, BrowserTracker {
                     websiteUsageMap.getOrDefault(currentWebsite, 0L) + timeSpent);
 
             log.info("resetTracking: Spent " + timeSpent / 1000 + " seconds on " + currentWebsite);
+            log.info("Browser Session ended at time: {}", LocalDateTime.now());
             if (browserUrl != null) {
                 saveBrowserActivity(activeWindow, browserUrl, sessionId, startDateTime, LocalDateTime.now(), Duration.between(startDateTime, LocalDateTime.now()).getSeconds());
             }

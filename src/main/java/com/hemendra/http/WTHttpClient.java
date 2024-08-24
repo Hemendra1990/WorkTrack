@@ -2,6 +2,7 @@ package com.hemendra.http;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.hemendra.component.WorkTrackProperties;
+import com.hemendra.dto.AppActivityDto;
 import com.hemendra.dto.UserActivityDto;
 import com.hemendra.dto.UserWebsiteActivityDto;
 import lombok.extern.slf4j.Slf4j;
@@ -107,6 +108,26 @@ public class WTHttpClient {
 
         } catch (IOException e) {
             log.error("Error uploading screenshot: {}", e.getMessage());
+        }
+    }
+
+    public void logAppActivity(AppActivityDto appActivityDto) {
+        try (CloseableHttpClient client = HttpClients.createDefault()) {
+            String requestJson = objectMapper.writeValueAsString(appActivityDto);
+            HttpPost httpPost = new HttpPost(workTrackProperties.getServerUserActivityUrl()+"/app-activity");
+            StringEntity entity = new StringEntity(requestJson);
+            httpPost.setEntity(entity);
+            httpPost.setHeader("Content-Type", "application/json");
+
+            // Execute the request
+            try (CloseableHttpResponse response = client.execute(httpPost)) {
+                String responseBody = EntityUtils.toString(response.getEntity());
+                log.info("Response status code: {}", response.getCode());
+            } catch (ParseException e) {
+                log.error("Error parsing response: {}", e.getMessage());
+            }
+        } catch (IOException e) {
+            log.error("Error logging user activity: {}", e.getMessage());
         }
     }
 }

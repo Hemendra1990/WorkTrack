@@ -1,5 +1,6 @@
-package com.hemendra.activity.apptracker;
+package com.hemendra.activity.apptracker.trackerimpl;
 
+import com.hemendra.activity.apptracker.AppUsageTracker;
 import org.springframework.stereotype.Component;
 
 import java.awt.*;
