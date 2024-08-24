@@ -1,10 +1,21 @@
 package com.hemendra.activity.apptracker.browser;
 
 import com.github.kwhat.jnativehook.mouse.NativeMouseMotionListener;
-import com.hemendra.activity.apptracker.*;
+import com.hemendra.activity.apptracker.AppUsageTracker;
+import com.hemendra.activity.apptracker.BrowserTracker;
+import com.hemendra.activity.apptracker.trackerimpl.MacOsAppUsageTracker;
+import com.hemendra.activity.apptracker.trackerimpl.WindowsAppUsageTracker;
+import com.hemendra.activity.apptracker.trackerimpl.factory.AppUsageTrackerFactory;
+import com.hemendra.dto.AppActivityDto;
+import com.hemendra.http.WTHttpClient;
+import com.hemendra.util.AppCategoryIdentifier;
+import com.hemendra.util.WorkTrackUtils;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
+
+import java.time.Duration;
+import java.time.LocalDateTime;
 
 /**
  * @Author : Hemendra Sethi
@@ -16,16 +27,23 @@ import org.springframework.stereotype.Component;
 public class CrossPlatformBrowserAppUsageTracker implements NativeMouseMotionListener {
 
     private final AppUsageTrackerFactory appUsageTrackerFactory;
+    private final WorkTrackUtils workTrackUtils;
+    private final WTHttpClient wtHttpClient;
 
     private static String currentActiveWindow = "";
+    LocalDateTime appStartTime = LocalDateTime.now();
 
     public void runAppUsageTracker() {
         AppUsageTracker appUsageTracker = appUsageTrackerFactory.getOsSpecificAppUsageTracker();
 
         while (true) {
             String activeWindow = appUsageTracker.getActiveWindowTitle();
-
             if (!currentActiveWindow.equalsIgnoreCase(activeWindow)) {
+                LocalDateTime now = LocalDateTime.now();
+                final LocalDateTime tAppStartTime = appStartTime;
+                //TODO: THIS IS VERY CRITICAL CODE, MAY HAMPER THE PERFORMANCEs
+                saveAppUsage(currentActiveWindow, tAppStartTime, now, Duration.between(tAppStartTime, now).getSeconds());
+                appStartTime = now;
                 currentActiveWindow = activeWindow;
 
                 if (BrowserTracker.isBrowser(activeWindow)) {
@@ -54,5 +72,32 @@ public class CrossPlatformBrowserAppUsageTracker implements NativeMouseMotionLis
             }
         }
 
+    }
+
+    /**
+     * Need to move to another class
+     *
+     * @param currentActiveWindow
+     * @param appStartTime
+     * @param now
+     * @param durationInSeconds
+     */
+    private void saveAppUsage(String currentActiveWindow, LocalDateTime appStartTime, LocalDateTime now, long durationInSeconds) {
+        String userName = workTrackUtils.getUserName();
+        String macAddress = workTrackUtils.getMacAddress();
+
+        AppActivityDto appActivityDto = new AppActivityDto();
+        appActivityDto.setUserName(userName);
+        appActivityDto.setMacAddress(macAddress);
+
+        appActivityDto.setStartTime(appStartTime);
+        appActivityDto.setEndTime(now);
+
+        appActivityDto.setDuration(durationInSeconds);
+        appActivityDto.setActiveWindow(currentActiveWindow);
+        appActivityDto.setAppName(currentActiveWindow);
+        appActivityDto.setAppCategory(AppCategoryIdentifier.getAppCategory(currentActiveWindow));
+
+        wtHttpClient.logAppActivity(appActivityDto);
     }
 }
