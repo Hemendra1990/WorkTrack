@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<launch4jConfig>
+  <dontWrapJar>false</dontWrapJar>
+  <headerType>gui</headerType>
+  <jar>G:\Bapi\Project\WorkTrack\build\wt-1.jar</jar>
+  <outfile>G:\Bapi\Project\WorkTrack\build\Output\UnityTracker.exe</outfile>
+  <errTitle></errTitle>
+  <cmdLine></cmdLine>
+  <chdir>.</chdir>
+  <priority>normal</priority>
+  <downloadUrl></downloadUrl>
+  <supportUrl></supportUrl>
+  <stayAlive>false</stayAlive>
+  <restartOnCrash>false</restartOnCrash>
+  <manifest>G:\Bapi\Project\WorkTrack\build\perm.manifest</manifest>
+  <icon>G:\Bapi\Project\WorkTrack\build\logo-light.ico</icon>
+  <jre>
+    <path>C:\Program Files\Eclipse Adoptium\jre-21.0.4.7-hotspot</path>
+    <requiresJdk>false</requiresJdk>
+    <requires64Bit>false</requires64Bit>
+    <minVersion></minVersion>
+    <maxVersion></maxVersion>
+  </jre>
+</launch4jConfig>
