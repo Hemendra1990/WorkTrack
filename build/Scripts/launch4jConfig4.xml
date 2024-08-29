@@ -3,7 +3,7 @@
   <dontWrapJar>false</dontWrapJar>
   <headerType>gui</headerType>
   <jar>G:\Bapi\Project\WorkTrack\build\wt-1.jar</jar>
-  <outfile>G:\Bapi\Project\WorkTrack\build\Output\UnityTracker.exe</outfile>
+  <outfile>G:\Bapi\Project\WorkTrack\build\Output\wtlunch.exe</outfile>
   <errTitle></errTitle>
   <cmdLine></cmdLine>
   <chdir>.</chdir>
@@ -15,10 +15,11 @@
   <manifest>G:\Bapi\Project\WorkTrack\build\perm.manifest</manifest>
   <icon>G:\Bapi\Project\WorkTrack\build\logo-light.ico</icon>
   <jre>
-    <path>C:\Program Files\Eclipse Adoptium\jre-21.0.4.7-hotspot</path>
+    <path>jre</path>
     <requiresJdk>false</requiresJdk>
     <requires64Bit>false</requires64Bit>
     <minVersion></minVersion>
     <maxVersion></maxVersion>
+    <opt>-Dlaunch4j.jrehomedir=&quot;%JREHOMEDIR%&quot;</opt>
   </jre>
 </launch4jConfig>
