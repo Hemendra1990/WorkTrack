@@ -12,6 +12,8 @@ import org.springframework.stereotype.Component;
 
 import java.awt.*;
 import java.awt.image.BufferedImage;
+import java.io.BufferedReader;
+import java.io.InputStreamReader;
 import java.time.Duration;
 import java.time.LocalDateTime;
 import java.util.HashMap;
@@ -53,7 +55,7 @@ public class WindowsAppUsageTracker implements AppUsageTracker, BrowserTracker {
     @Override
     public String getBrowserUrl(String activeWindow) {
         String browserName = getBrowserName(activeWindow);
-        /*try {
+        try {
             String[] command = {"powershell", "Get-Process " + browserName + " | ForEach-Object {($_.MainWindowTitle)}"};
             Process process = Runtime.getRuntime().exec(command);
             BufferedReader reader = new BufferedReader(new InputStreamReader(process.getInputStream()));
@@ -62,12 +64,17 @@ public class WindowsAppUsageTracker implements AppUsageTracker, BrowserTracker {
             while ((line = reader.readLine()) != null) {
                 builder.append(line);
             }
+
+            log.info("url {}", builder.toString());
+
             return builder.toString();
         } catch (Exception e) {
             e.printStackTrace();
             return null;
-        }*/
-        return browserURLFetcher.fetchBrowserUrlPreservingClipboard();
+        }
+
+        //TODO: Causing multiple issues while clipping the url
+        //return browserURLFetcher.fetchBrowserUrlPreservingClipboard();
     }
 
     private String getBrowserName(String activeWindow) {

@@ -5,9 +5,12 @@ import com.hemendra.activity.apptracker.browser.CrossPlatformBrowserAppUsageTrac
 import com.hemendra.activity.apptracker.screenshot.CrossPlatformScreenshotTaker;
 import com.hemendra.component.WorkTrackProperties;
 import com.hemendra.config.WorkTrackConfig;
+import com.hemendra.tray.WtSystemTray;
 import com.hemendra.util.BeanUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
+
+import java.awt.*;
 
 /**
  * @author hemendra
@@ -15,7 +18,11 @@ import org.springframework.context.annotation.AnnotationConfigApplicationContext
  */
 @Slf4j
 public class WorkTrackApp {
+
     public static void main(String[] args) throws InterruptedException {
+        if (!SystemTray.isSupported()) {
+            log.error("System tray is not supported!");
+        }
         WorkTrackApp.run();
     }
 
@@ -23,6 +30,9 @@ public class WorkTrackApp {
         AnnotationConfigApplicationContext workTrackAppContext = new AnnotationConfigApplicationContext();
         workTrackAppContext.register(WorkTrackConfig.class);
         workTrackAppContext.refresh();
+
+        WtSystemTray systemTray = BeanUtils.getBean(WtSystemTray.class);
+        systemTray.createSystemTray();
 
         WorkTrackProperties workTrackProperties = workTrackAppContext.getBean(WorkTrackProperties.class);
         log.info("Starting {} version {}", workTrackProperties.getAppName(), workTrackProperties.getAppVersion());
