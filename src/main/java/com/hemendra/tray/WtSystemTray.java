@@ -1,8 +1,12 @@
 package com.hemendra.tray;
 
+import com.hemendra.tray.stage.WtTrayDetailInfo;
+
+import javafx.application.Platform;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 
+import javax.swing.*;
 import java.awt.*;
 import java.net.URL;
 
@@ -22,6 +26,7 @@ public class WtSystemTray {
             log.error("Icon image not found.");
             return;
         }
+
         Image image = Toolkit.getDefaultToolkit().getImage(imageUrl);
 
         // Create tray icon
@@ -40,7 +45,10 @@ public class WtSystemTray {
         trayIcon.setPopupMenu(popupMenu);
 
         // Add action listeners
-        openItem.addActionListener(e -> log.info("Open clicked"));
+        openItem.addActionListener(e -> {
+            log.info("Open clicked");
+            WtTrayDetailInfo.launchStage();
+        });
         exitItem.addActionListener(e -> System.exit(0));
         trayIcon.addActionListener(e -> log.info("Tray icon clicked"));
 
