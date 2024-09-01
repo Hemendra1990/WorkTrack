@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple Computer//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+    <key>NSMicrophoneUsageDescription</key>
+    <string>Need microphone access to record audio</string>
+    <key>NSCameraUsageDescription</key>
+    <string>Need camera access to take photos</string>
+    <key>NSSystemAdministrationUsageDescription</key>
+    <string>Need system administration access</string>
+    <key>NSAppleEventsUsageDescription</key>
+    <string>Need Apple Events access to automate tasks</string>
+    <key>NSRequiresAquaSystemAppearance</key>
+    <true/>
+    <key>NSRequiresScreenCapture</key>
+    <true/>
+    <key>NSSystemAudioRecordingUsageDescription</key>
+    <string>Need system audio recording access</string>
+    <key>NSAccessibilityUsageDescription</key>
+    <string>Need accessibility access to control the computer</string>
+</dict>
+</plist>
