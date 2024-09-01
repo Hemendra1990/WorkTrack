@@ -2,11 +2,12 @@ package com.hemendra.tray.stage;
 
 import javafx.application.Application;
 import javafx.application.Platform;
+import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
-import javafx.scene.control.Label;
-import javafx.scene.layout.StackPane;
 import javafx.stage.Stage;
 import lombok.extern.slf4j.Slf4j;
+
+import java.io.IOException;
 
 @Slf4j
 public class JavaFXApplication extends Application {
@@ -14,40 +15,41 @@ public class JavaFXApplication extends Application {
     private static JavaFXApplication instance;
 
     @Override
-    public void start(Stage stage) {
-        log.info("JavaFXApplication start method called");
+    public void start(Stage stage) throws IOException {
         primaryStage = stage;
         instance = this;
         createAndSetScene();
-        log.info("JavaFX application initialized");
 
         // Prevent JavaFX application from exiting when all windows are closed
         Platform.setImplicitExit(false);
     }
 
-    private void createAndSetScene() {
-        primaryStage.setScene(new Scene(new StackPane(new Label("Unity Tracker Details")), 350, 600));
+    private void createAndSetScene() throws IOException {
+        FXMLLoader fxmlLoader = new FXMLLoader(JavaFXApplication.class.getResource("/com/hemendra/tray/wt-info.fxml"));
+        //primaryStage.setScene(new Scene(new StackPane(new Label("Unity Tracker Details")), 350, 600));
+        primaryStage.setScene(new Scene(fxmlLoader.load(), 280, 422));
+        primaryStage.setResizable(false);
         primaryStage.setTitle("Unity Tracker");
         primaryStage.setOnCloseRequest(event -> {
-            log.info("Close request received");
             event.consume();
             hideStage();
         });
     }
 
     public static void showStage() {
-        log.info("showStage called");
         Platform.runLater(() -> {
             if (primaryStage == null) {
                 log.error("Primary stage is null, recreating...");
-                instance.createAndSetScene();
+                try {
+                    instance.createAndSetScene();
+                } catch (IOException e) {
+                    throw new RuntimeException(e);
+                }
             }
             if (!primaryStage.isShowing()) {
                 primaryStage.show();
-                log.info("Stage shown");
             }
             primaryStage.toFront();
-            log.info("Stage brought to front");
         });
     }
 
@@ -56,7 +58,6 @@ public class JavaFXApplication extends Application {
         Platform.runLater(() -> {
             if (primaryStage != null) {
                 primaryStage.hide();
-                log.info("Stage hidden");
             } else {
                 log.error("Cannot hide stage: primary stage is null");
             }

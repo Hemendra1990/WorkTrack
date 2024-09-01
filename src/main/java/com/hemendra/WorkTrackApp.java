@@ -8,11 +8,13 @@ import com.hemendra.config.WorkTrackConfig;
 import com.hemendra.tray.WtSystemTray;
 import com.hemendra.tray.stage.JavaFXApplication;
 import com.hemendra.util.BeanUtils;
+import com.hemendra.util.WtFxUtils;
 import javafx.application.Platform;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 
 import java.awt.*;
+import java.time.LocalDateTime;
 import java.util.concurrent.CountDownLatch;
 
 /**
@@ -30,6 +32,7 @@ public class WorkTrackApp {
         }
         // Initialize JavaFX toolkit
         Thread javaFXThread = new Thread(() -> {
+            WtFxUtils.setAppStartTime(LocalDateTime.now());
             JavaFXApplication.launch(JavaFXApplication.class);
         });
         javaFXThread.setDaemon(false);

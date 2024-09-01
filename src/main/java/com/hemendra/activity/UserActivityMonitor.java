@@ -15,6 +15,7 @@ import com.hemendra.util.WorkTrackUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
 import java.time.LocalDateTime;
@@ -40,6 +41,8 @@ public class UserActivityMonitor implements NativeKeyListener, NativeMouseListen
     private LocalDateTime userInitialStartTime; //when the program starts
     private boolean isIdle = false;
     private static UUID sessionId;
+
+    private LocalDateTime lastLoggedTime;
 
     public UserActivityMonitor() {
         this.lastActivityTime = LocalDateTime.now();
@@ -75,6 +78,12 @@ public class UserActivityMonitor implements NativeKeyListener, NativeMouseListen
     private void checkIdleTime() {
         LocalDateTime currentTime = LocalDateTime.now();
         long idleDuration = java.time.Duration.between(this.lastActivityTime, currentTime).getSeconds();
+
+        // Log intermediate state every second
+        if (lastLoggedTime == null || java.time.Duration.between(lastLoggedTime, currentTime).getSeconds() >= 60) {
+            logIntermediateState(currentTime, idleDuration);
+            lastLoggedTime = currentTime;
+        }
 
         if (!isIdle && idleDuration >= workTrackProperties.getIdleThresholdSeconds()) {
             log.debug("User was active for: " + idleDuration + " seconds.");
@@ -160,5 +169,14 @@ public class UserActivityMonitor implements NativeKeyListener, NativeMouseListen
     @Override
     public void afterPropertiesSet() throws Exception {
         saveActivityLog(ActivityType.ACTIVE, userInitialStartTime, null, 0, sessionId, ActivityState.START);
+    }
+
+    private void logIntermediateState(LocalDateTime currentTime, long idleDuration) {
+        log.info("Intermediate : " + idleDuration + " seconds.");
+        ActivityType currentActivityType = isIdle ? ActivityType.IDLE : ActivityType.ACTIVE;
+        LocalDateTime startTime = isIdle ? idleStartTime : lastActivityTime;
+        long duration = java.time.Duration.between(startTime, currentTime).getSeconds();
+
+        saveActivityLog(currentActivityType, startTime, currentTime, duration, sessionId, ActivityState.CONTINUE);
     }
 }

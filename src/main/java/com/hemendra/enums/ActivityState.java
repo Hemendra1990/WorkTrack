@@ -2,7 +2,9 @@ package com.hemendra.enums;
 
 public enum ActivityState {
     START("start"),
-    END("end");
+    END("end"),
+    AWAY("away"),
+    CONTINUE("continue");
 
     private String state;
 
