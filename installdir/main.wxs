@@ -70,7 +70,11 @@
     <CustomAction Id="JpFindRelatedProducts" BinaryKey="JpCaDll" DllEntry="FindRelatedProductsEx" />
 
     <!-- Standard required root -->
-    <Directory Id="TARGETDIR" Name="SourceDir"/>
+    <Directory Id="TARGETDIR" Name="SourceDir">
+      <Directory Id="ProgramFilesFolder">
+        <Directory Id="INSTALLFOLDER" Name="$(var.JpAppName)" />
+      </Directory>
+    </Directory>
 
     <DirectoryRef Id="TARGETDIR">
       <Component Id="AutostartComponent" Guid="32ae630a-cd38-4d1b-bd01-7a82e9a5482f">
