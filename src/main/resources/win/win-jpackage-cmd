@@ -1,0 +1,5 @@
+# jpackage --input .\target\ --name WorkTrackApp --main-jar wt-1.jar --main-class com.hemendra.WorkTrackApp --type exe --vendor HemuCorp --resource-dir .\installdir\ --verbose --win-menu --win-per-user-install --win-shortcut --win-shortcut-prompt
+
+jpackage --input .\target\ --name "Unity Tracker" --main-jar wt-1.jar --main-class com.hemendra.WorkTrackApp --type exe --vendor BIPros --resource-dir .\installdir\ --verbose --win-menu --win-per-user-install --win-shortcut --win-shortcut-prompt --icon build/logo-light.ico
+
+#we have to be in the root directory like "G:\Bapi\Project\WorkTrack"
