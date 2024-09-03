@@ -29,7 +29,6 @@ module WorkTrack {
     exports com.hemendra.dto;
     exports com.hemendra.enums;
     exports com.hemendra.http;
-    exports com.hemendra.nrc;
     exports com.hemendra.tray;
     exports com.hemendra.tray.stage;
     exports com.hemendra.util;
