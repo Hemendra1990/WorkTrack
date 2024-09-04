@@ -26,10 +26,32 @@ module WorkTrack {
     exports com.hemendra.activity.apptracker.screenshot;
     exports com.hemendra.activity.apptracker.trackerimpl;
     exports com.hemendra.component;
+    exports com.hemendra.config;
     exports com.hemendra.dto;
     exports com.hemendra.enums;
     exports com.hemendra.http;
     exports com.hemendra.tray;
+    exports com.hemendra.tray.controller;
     exports com.hemendra.tray.stage;
-    exports com.hemendra.util;
+    exports com.hemendra.listener;
+
+    //opens com.hemendra.config to spring.core;
+    opens com.hemendra;
+    opens com.hemendra.activity;
+    opens com.hemendra.activity.apptracker;
+    opens com.hemendra.activity.apptracker.browser;
+    opens com.hemendra.activity.apptracker.screenshot;
+    opens com.hemendra.activity.apptracker.trackerimpl;
+    opens com.hemendra.activity.apptracker.trackerimpl.factory;
+    opens com.hemendra.component;
+    opens com.hemendra.config;
+    opens com.hemendra.dto;
+    opens com.hemendra.enums;
+    opens com.hemendra.http;
+    opens com.hemendra.tray;
+    opens com.hemendra.tray.controller;
+    opens com.hemendra.tray.stage;
+    opens com.hemendra.listener;
+    opens com.hemendra.util;
+
 }
