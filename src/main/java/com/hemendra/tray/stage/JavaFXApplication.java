@@ -4,10 +4,12 @@ import javafx.application.Application;
 import javafx.application.Platform;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
+import javafx.scene.image.Image;
 import javafx.stage.Stage;
 import lombok.extern.slf4j.Slf4j;
 
 import java.io.IOException;
+import java.io.InputStream;
 
 @Slf4j
 public class JavaFXApplication extends Application {
@@ -30,10 +32,17 @@ public class JavaFXApplication extends Application {
         primaryStage.setScene(new Scene(fxmlLoader.load(), 280, 422));
         primaryStage.setResizable(false);
         primaryStage.setTitle("Unity Tracker");
+        addStageIcon();
         primaryStage.setOnCloseRequest(event -> {
             event.consume();
             hideStage();
         });
+    }
+
+    private static void addStageIcon() throws IOException {
+        InputStream iconStream = JavaFXApplication.class.getResource("/logo-light.png").openStream();
+        Image image = new Image(iconStream);
+        primaryStage.getIcons().add(image);
     }
 
     public static void showStage() {
