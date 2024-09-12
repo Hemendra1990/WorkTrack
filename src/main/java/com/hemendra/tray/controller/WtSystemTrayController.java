@@ -30,6 +30,7 @@ public class WtSystemTrayController {
 
     @FXML
     private void initialize() {
+        userName.setText(WtFxUtils.getUserName());
         // Create a timeline that runs every second
         Timeline timeline = new Timeline(new KeyFrame(Duration.seconds(1), event -> updateTime()));
         timeline.setCycleCount(Timeline.INDEFINITE);
@@ -39,7 +40,7 @@ public class WtSystemTrayController {
     private void updateTime() {
         LocalDateTime appStartTime = WtFxUtils.getAppStartTime();
         String durationFormatted = getDurationFormatted(appStartTime, LocalDateTime.now());
-        timeStartedLabel.setText(DateTimeFormatter.ofPattern("dd MMM hh:mm:ss").format(appStartTime));
+        timeStartedLabel.setText(DateTimeFormatter.ofPattern("dd MMM, hh:mm:ss a").format(appStartTime));
         timeElapsedLabel.setText(durationFormatted);
     }
 

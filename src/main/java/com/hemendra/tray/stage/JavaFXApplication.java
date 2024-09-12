@@ -29,7 +29,7 @@ public class JavaFXApplication extends Application {
     private void createAndSetScene() throws IOException {
         FXMLLoader fxmlLoader = new FXMLLoader(JavaFXApplication.class.getResource("/com/hemendra/tray/wt-info.fxml"));
         //primaryStage.setScene(new Scene(new StackPane(new Label("Unity Tracker Details")), 350, 600));
-        primaryStage.setScene(new Scene(fxmlLoader.load(), 280, 422));
+        primaryStage.setScene(new Scene(fxmlLoader.load()));
         primaryStage.setResizable(false);
         primaryStage.setTitle("Unity Tracker");
         addStageIcon();
