@@ -12,6 +12,7 @@ import com.hemendra.enums.ActivityState;
 import com.hemendra.enums.ActivityType;
 import com.hemendra.http.WTHttpClient;
 import com.hemendra.util.WorkTrackUtils;
+import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -147,7 +148,7 @@ public class UserActivityMonitor implements NativeKeyListener, NativeMouseListen
         lastActivityTime = currentTime;
     }
 
-    private void saveActivityLog(ActivityType activityType, LocalDateTime startTime, LocalDateTime endTime, long duration, UUID sessionId, ActivityState state) {
+    public void saveActivityLog(ActivityType activityType, LocalDateTime startTime, LocalDateTime endTime, long duration, UUID sessionId, ActivityState state) {
         String userName = workTrackUtils.getUserName();
         String macAddress = workTrackUtils.getMacAddress();
 
@@ -179,4 +180,5 @@ public class UserActivityMonitor implements NativeKeyListener, NativeMouseListen
 
         saveActivityLog(currentActivityType, startTime, currentTime, duration, sessionId, ActivityState.CONTINUE);
     }
+
 }

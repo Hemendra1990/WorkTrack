@@ -3,6 +3,7 @@ package com.hemendra;
 import com.hemendra.activity.UserActivityMonitor;
 import com.hemendra.activity.apptracker.browser.CrossPlatformBrowserAppUsageTracker;
 import com.hemendra.activity.apptracker.screenshot.CrossPlatformScreenshotTaker;
+import com.hemendra.activity.systemevent.SystemShutdownListener;
 import com.hemendra.component.WorkTrackProperties;
 import com.hemendra.config.WorkTrackConfig;
 import com.hemendra.tray.WtSystemTray;
@@ -27,6 +28,7 @@ public class WorkTrackApp {
     private static final CountDownLatch javafxInitLatch = new CountDownLatch(1);
 
     public static void main(String[] args) throws InterruptedException {
+
         if (!SystemTray.isSupported()) {
             log.error("System tray is not supported!");
         }
@@ -47,6 +49,7 @@ public class WorkTrackApp {
         javafxInitLatch.await();
 
         WorkTrackApp.run();
+
     }
 
     private static void run() throws InterruptedException {
@@ -61,8 +64,10 @@ public class WorkTrackApp {
         log.info("Starting {} version {}", workTrackProperties.getAppName(), workTrackProperties.getAppVersion());
 
         Thread.ofVirtual().start(() -> {
+
             UserActivityMonitor activityMonitor = workTrackAppContext.getBean(UserActivityMonitor.class);
             activityMonitor.startMonitoring();
+
         });
 
         Thread.ofVirtual().start(() -> {
@@ -79,10 +84,14 @@ public class WorkTrackApp {
             }
         });
 
+        Thread.ofVirtual().start(SystemShutdownListener::initializeSystemShutdownListener);
+
         Thread.currentThread().join();
     }
 
     public static void notifyJavaFXInitialized() {
         javafxInitLatch.countDown();
     }
+
+
 }

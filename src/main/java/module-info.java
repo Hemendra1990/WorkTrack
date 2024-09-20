@@ -18,6 +18,7 @@ module WorkTrack {
     requires org.apache.httpcomponents.client5.httpclient5;
     requires org.apache.httpcomponents.core5.httpcore5;
     requires static lombok;
+    requires org.json;
 
     exports com.hemendra;
     exports com.hemendra.activity;
@@ -53,5 +54,7 @@ module WorkTrack {
     opens com.hemendra.tray.stage;
     opens com.hemendra.listener;
     opens com.hemendra.util;
+    exports com.hemendra.activity.systemevent;
+    opens com.hemendra.activity.systemevent;
 
 }

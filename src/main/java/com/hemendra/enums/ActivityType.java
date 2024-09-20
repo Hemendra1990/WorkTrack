@@ -4,7 +4,10 @@ public enum ActivityType {
     ACTIVE("ACTIVE"),
     STARTED("STARTED"),
     IDLE("IDLE"),
-    BROWSING("BROWSING");
+    BROWSING("BROWSING"),
+    SHUTDOWN("SHUTDOWN"),
+    LOCK("LOCK"),
+    SLEEP("SLEEP");
 
     private String type;
 

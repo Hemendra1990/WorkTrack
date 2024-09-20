@@ -4,7 +4,10 @@ public enum ActivityState {
     START("start"),
     END("end"),
     AWAY("away"),
-    CONTINUE("continue");
+    CONTINUE("continue"),
+    SHUTDOWN("shutdown"),
+    LOCK_COMPLETE("lock_complete"),
+    SLEEP_COMPLETE("sleep_complete");
 
     private String state;
 
