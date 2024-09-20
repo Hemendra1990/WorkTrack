@@ -278,6 +278,9 @@ public class SystemShutdownListener {
 
     // Initialize system shutdown listener
     public static void initializeSystemShutdownListener() {
+
+
+
         checkShutdownEvent();
 
         WinUser.WNDCLASSEX wndClass = new WinUser.WNDCLASSEX();
