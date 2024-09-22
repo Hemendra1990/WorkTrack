@@ -1,7 +1,7 @@
 package com.hemendra.activity.systemevent;
 
 import com.hemendra.activity.systemevent.factory.SystemEventListenerFactory;
-import com.hemendra.activity.systemevent.libs.ScreenLockDetector;
+import com.hemendra.activity.systemevent.libs.SystemSleepDetector;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
@@ -14,7 +14,7 @@ public class CrossPlatformSystemEventListener {
 
     public void runSystemEventListener() {
         SystemEventListener osSpecificSystemEventListener = systemEventListenerFactory.getOsSpecificSystemEventListener();
-        ScreenLockDetector screenLockDetector = ScreenLockDetector.getInstance();
+        SystemSleepDetector screenLockDetector = SystemSleepDetector.getInstance();
         screenLockDetector.setListener(osSpecificSystemEventListener);
         screenLockDetector.startScreenLockDetection();
     }

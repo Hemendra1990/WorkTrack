@@ -3,7 +3,7 @@
 ## 1. Create a Java class
 
 ```bash
-public class ScreenLockDetector {
+public class SystemSleepDetector {
     static {
         System.loadLibrary("screenlockdetector");
     }
@@ -182,7 +182,7 @@ The header file you provided matches the package and method names correctly for 
            } catch (UnsatisfiedLinkError e) {
                String libPath = "/native/macosx/screenlockdetector.dylib";
                try {
-                   System.load(ScreenLockDetector.class.getResource(libPath).getPath());
+                   System.load(SystemSleepDetector.class.getResource(libPath).getPath());
                    System.out.println("Loaded screenlock detector library from: " + libPath);
                } catch (Exception e2) {
                    System.err.println("Failed to load native library: " + e2);
@@ -198,7 +198,7 @@ The header file you provided matches the package and method names correctly for 
 4. **Verify Native Method Signatures**:
     - Use the `javap` command to verify that the native method signatures in the compiled `ScreenLockDetector` class match the JNI method names:
       ```bash
-      javap -s com.hemendra.activity.systemevent.libs.ScreenLockDetector
+      javap -s com.hemendra.activity.systemevent.libs.SystemSleepDetectorr
       ```
       The output should show something like:
       ```bash
@@ -211,7 +211,7 @@ The header file you provided matches the package and method names correctly for 
 5. **Use `nm` to Verify the Symbols**:
     - Run the `nm` command on the compiled `.dylib` to ensure that the symbols for the native methods (`startScreenLockDetection` and `stopScreenLockDetection`) are present:
       ```bash
-      nm screenlockdetector.dylib | grep ScreenLockDetector
+      nm screenlockdetector.dylib | grep SystemSleepDetector
       ```
       The output should contain entries like:
       ```bash

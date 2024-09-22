@@ -3,22 +3,18 @@ package com.hemendra.activity.systemevent.libs;
 import com.hemendra.activity.systemevent.SystemEventListener;
 import lombok.extern.slf4j.Slf4j;
 
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.InputStream;
-
 @Slf4j
-public class ScreenLockDetector {
-    private static ScreenLockDetector instance;
+public class SystemSleepDetector {
+    private static SystemSleepDetector instance;
     private SystemEventListener listener;
 
     static {
         try {
-            System.loadLibrary("screenlockdetector");
+            System.loadLibrary("systemSleepDetector");
         } catch (UnsatisfiedLinkError e) {
-            String libPath = "/native/macosx/screenlockdetector.dylib";
+            String libPath = "/native/macosx/systemSleepDetector.dylib";
             try {
-                System.load(ScreenLockDetector.class.getResource(libPath).getPath());
+                System.load(SystemSleepDetector.class.getResource(libPath).getPath());
                 log.info("Loaded screenlock detector library: " + libPath);
             } catch (Exception e2) {
                 log.error("Failed to load native library: {}", e2);
@@ -27,11 +23,11 @@ public class ScreenLockDetector {
     }
 
 
-    private ScreenLockDetector() {}
+    private SystemSleepDetector() {}
 
-    public static synchronized ScreenLockDetector getInstance() {
+    public static synchronized SystemSleepDetector getInstance() {
         if (instance == null) {
-            instance = new ScreenLockDetector();
+            instance = new SystemSleepDetector();
         }
         return instance;
     }

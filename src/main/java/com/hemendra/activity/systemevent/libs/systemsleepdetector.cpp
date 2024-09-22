@@ -1,5 +1,5 @@
 #include <jni.h>
-#include "com_hemendra_activity_systemevent_libs_ScreenLockDetector.h"
+#include "com_hemendra_activity_systemevent_libs_SystemSleepDetector.h"
 #include <CoreFoundation/CoreFoundation.h>
 #include <IOKit/IOKitLib.h>
 #include <IOKit/pwr_mgt/IOPMLib.h>
@@ -35,7 +35,7 @@ void screenStateChanged(void *refCon, io_service_t service, natural_t messageTyp
     jvm->DetachCurrentThread();
 }
 
-extern "C" JNIEXPORT void JNICALL Java_com_hemendra_activity_systemevent_libs_ScreenLockDetector_startScreenLockDetection
+extern "C" JNIEXPORT void JNICALL Java_com_hemendra_activity_systemevent_libs_SystemSleepDetector_startScreenLockDetection
   (JNIEnv* env, jobject obj) {
     JavaVM* jvm;
     env->GetJavaVM(&jvm);
@@ -67,7 +67,7 @@ extern "C" JNIEXPORT void JNICALL Java_com_hemendra_activity_systemevent_libs_Sc
     CFRunLoopRun();
 }
 
-extern "C" JNIEXPORT void JNICALL Java_com_hemendra_activity_systemevent_libs_ScreenLockDetector_stopScreenLockDetection
+extern "C" JNIEXPORT void JNICALL Java_com_hemendra_activity_systemevent_libs_SystemSleepDetector_stopScreenLockDetection
   (JNIEnv* env, jobject obj) {
     IODeregisterForSystemPower(&notifierObject);
     IOServiceClose(root_port);
