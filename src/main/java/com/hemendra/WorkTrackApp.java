@@ -72,7 +72,7 @@ public class WorkTrackApp {
 
         Thread.ofVirtual().start(() -> {
             CrossPlatformBrowserAppUsageTracker appUsageTracker = BeanUtils.getBean(CrossPlatformBrowserAppUsageTracker.class);
-            appUsageTracker.runAppUsageTracker();
+            //appUsageTracker.runAppUsageTracker();
         });
 
         /*Thread.ofVirtual().start(() -> {
@@ -86,11 +86,11 @@ public class WorkTrackApp {
 
         //Thread.ofVirtual().start(SystemShutdownListener::initializeSystemShutdownListener);
 
-        Thread systemEventListenerThread = Thread.ofVirtual().start(() -> {
-            CrossPlatformSystemEventListener systemEventListener = BeanUtils.getBean(CrossPlatformSystemEventListener.class);
-            systemEventListener.runSystemEventListener();
+        CrossPlatformSystemEventListener systemEventListener = BeanUtils.getBean(CrossPlatformSystemEventListener.class);
+        systemEventListener.runSystemEventListener();
+        /*Thread systemEventListenerThread = Thread.ofVirtual().start(() -> {
         });
-        log.info("is systemEventListenerThread alive? {}", systemEventListenerThread.isAlive());
+        log.info("is systemEventListenerThread alive? {}", systemEventListenerThread.isAlive());*/
         Thread.currentThread().join();
     }
 

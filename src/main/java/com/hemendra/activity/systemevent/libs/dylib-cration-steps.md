@@ -156,7 +156,7 @@ The header file you provided matches the package and method names correctly for 
    After ensuring the method implementations are correct, recompile your native library. Make sure the compilation command includes the correct paths to Java headers, and links to the required macOS frameworks:
 
    ```bash
-   g++ -I"$JAVA_HOME/include" -I"$JAVA_HOME/include/darwin" -shared -fPIC -framework IOKit -framework CoreFoundation -o libscreenlockdetector.dylib screenlockdetector.cpp
+   g++ -I"$JAVA_HOME/include" -I"$JAVA_HOME/include/darwin" -shared -fPIC -framework IOKit -framework CoreFoundation -o screenlockdetector.dylib screenlockdetector.cpp
    ```
 
     - Ensure that `$JAVA_HOME` points to the correct Java installation.
@@ -206,7 +206,7 @@ The header file you provided matches the package and method names correctly for 
 5. **Use `nm` to Verify the Symbols**:
     - Run the `nm` command on the compiled `.dylib` to ensure that the symbols for the native methods (`startScreenLockDetection` and `stopScreenLockDetection`) are present:
       ```bash
-      nm libscreenlockdetector.dylib | grep ScreenLockDetector
+      nm screenlockdetector.dylib | grep ScreenLockDetector
       ```
       The output should contain entries like:
       ```bash

@@ -17,13 +17,19 @@ void screenStateChanged(void *refCon, io_service_t service, natural_t messageTyp
     JavaVM *jvm = (JavaVM *)refCon;
     jvm->AttachCurrentThread((void **)&env, NULL);
 
+    printf("Received messageType: %d\n", messageType); // Debugging messageType
+
     switch (messageType) {
         case kIOMessageSystemWillSleep:
+            printf("System is going to sleep (screen locked)\n");
             env->CallVoidMethod(globalObject, onScreenLockedMethod);
             break;
         case kIOMessageSystemHasPoweredOn:
+            printf("System has powered on (screen unlocked)\n");
             env->CallVoidMethod(globalObject, onScreenUnlockedMethod);
             break;
+        default:
+            printf("Unknown messageType: %d\n", messageType);
     }
 
     jvm->DetachCurrentThread();
@@ -39,6 +45,14 @@ extern "C" JNIEXPORT void JNICALL Java_com_hemendra_activity_systemevent_libs_Sc
     onScreenLockedMethod = env->GetMethodID(clazz, "onScreenLocked", "()V");
     onScreenUnlockedMethod = env->GetMethodID(clazz, "onScreenUnlocked", "()V");
 
+    // Debug to verify JNI method IDs
+    if (onScreenLockedMethod == NULL) {
+        printf("Failed to find onScreenLocked method\n");
+    }
+    if (onScreenUnlockedMethod == NULL) {
+        printf("Failed to find onScreenUnlocked method\n");
+    }
+
     root_port = IORegisterForSystemPower(jvm, &notifyPortRef, screenStateChanged, &notifierObject);
     if (root_port == 0) {
         printf("IORegisterForSystemPower failed\n");
@@ -48,9 +62,12 @@ extern "C" JNIEXPORT void JNICALL Java_com_hemendra_activity_systemevent_libs_Sc
     CFRunLoopAddSource(CFRunLoopGetCurrent(),
                        IONotificationPortGetRunLoopSource(notifyPortRef),
                        kCFRunLoopDefaultMode);
+
+    // Start the CFRunLoop to listen for system events
+    CFRunLoopRun();
 }
 
-extern "C" JNIEXPORT void JNICALL Javacom_hemendra_activity_systemevent_libs_ScreenLockDetector_stopScreenLockDetection
+extern "C" JNIEXPORT void JNICALL Java_com_hemendra_activity_systemevent_libs_ScreenLockDetector_stopScreenLockDetection
   (JNIEnv* env, jobject obj) {
     IODeregisterForSystemPower(&notifierObject);
     IOServiceClose(root_port);
