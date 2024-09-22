@@ -72,7 +72,7 @@ public class WorkTrackApp {
 
         Thread.ofVirtual().start(() -> {
             CrossPlatformBrowserAppUsageTracker appUsageTracker = BeanUtils.getBean(CrossPlatformBrowserAppUsageTracker.class);
-            //appUsageTracker.runAppUsageTracker();
+            appUsageTracker.runAppUsageTracker();
         });
 
         /*Thread.ofVirtual().start(() -> {
