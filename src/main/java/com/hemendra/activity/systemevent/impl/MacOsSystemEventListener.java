@@ -5,7 +5,9 @@ import com.hemendra.dto.UserActivityDto;
 import com.hemendra.enums.ActivityState;
 import com.hemendra.enums.ActivityType;
 import com.hemendra.http.WTHttpClient;
+import com.hemendra.tray.stage.AwayFromSystemStageManager;
 import com.hemendra.util.WorkTrackUtils;
+import javafx.application.Platform;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
@@ -21,6 +23,7 @@ public class MacOsSystemEventListener implements SystemEventListener {
 
     private final WorkTrackUtils workTrackUtils;
     private final WTHttpClient httpClient;
+    private final AwayFromSystemStageManager awayFromSystemStage;
 
     private static UUID uniqueScreenLockSessionId = UUID.randomUUID();
     private static LocalDateTime screenLockStartTime = LocalDateTime.now();
@@ -42,6 +45,9 @@ public class MacOsSystemEventListener implements SystemEventListener {
         log.info("Screen unlock event received at {}", now.toString());
         saveActivityLog(ActivityType.LOCK, screenLockStartTime, now, Duration.between(screenLockStartTime, now).getSeconds(), uniqueScreenLockSessionId, ActivityState.END);
         uniqueScreenLockSessionId = UUID.randomUUID();
+        Platform.runLater(() -> {
+            awayFromSystemStage.launchSystemAwayScene();
+        });
     }
 
     @Override
@@ -67,6 +73,9 @@ public class MacOsSystemEventListener implements SystemEventListener {
         LocalDateTime now = LocalDateTime.now();
         log.info("System wakeup from sleep at {}", now.toString());
         saveActivityLog(ActivityType.SLEEP, systemSleepStartTime, now, Duration.between(systemSleepStartTime, now).getSeconds(), uniqueSystemSleepSessionId, ActivityState.END);
+        Platform.runLater(() -> {
+            awayFromSystemStage.launchSystemAwayScene();
+        });
     }
 
     public void saveActivityLog(ActivityType activityType, LocalDateTime startTime, LocalDateTime endTime, long duration, UUID sessionId, ActivityState state) {
