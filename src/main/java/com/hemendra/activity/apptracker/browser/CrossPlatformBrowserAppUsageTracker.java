@@ -6,13 +6,16 @@ import com.hemendra.activity.apptracker.BrowserTracker;
 import com.hemendra.activity.apptracker.trackerimpl.MacOsAppUsageTracker;
 import com.hemendra.activity.apptracker.trackerimpl.WindowsAppUsageTracker;
 import com.hemendra.activity.apptracker.trackerimpl.factory.AppUsageTrackerFactory;
+import com.hemendra.component.WorkTrackProperties;
 import com.hemendra.dto.AppActivityDto;
 import com.hemendra.http.WTHttpClient;
 import com.hemendra.util.AppCategoryIdentifier;
 import com.hemendra.util.WorkTrackUtils;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Component;
+import org.springframework.util.StringUtils;
 
 import java.time.Duration;
 import java.time.LocalDateTime;
@@ -29,6 +32,8 @@ public class CrossPlatformBrowserAppUsageTracker implements NativeMouseMotionLis
     private final AppUsageTrackerFactory appUsageTrackerFactory;
     private final WorkTrackUtils workTrackUtils;
     private final WTHttpClient wtHttpClient;
+    private final WorkTrackProperties workTrackProperties;
+    private final ApplicationEventPublisher applicationEventPublisher;
 
     private static String currentActiveWindow = "";
     LocalDateTime appStartTime = LocalDateTime.now();
@@ -47,13 +52,15 @@ public class CrossPlatformBrowserAppUsageTracker implements NativeMouseMotionLis
                 currentActiveWindow = activeWindow;
 
                 if (BrowserTracker.isBrowser(activeWindow)) {
+                    String browserUrl = "";
                     if (appUsageTracker instanceof MacOsAppUsageTracker macOsAppUsageTracker) {
-                        String browserUrl = macOsAppUsageTracker.getBrowserUrl(activeWindow);
+                        browserUrl = macOsAppUsageTracker.getBrowserUrl(activeWindow);
                         macOsAppUsageTracker.trackWebsiteUsage(activeWindow, browserUrl);
                     } else if (appUsageTracker instanceof WindowsAppUsageTracker windowsAppUsageTracker) {
-                        String browserUrl = windowsAppUsageTracker.getBrowserUrl(activeWindow);
+                        browserUrl = windowsAppUsageTracker.getBrowserUrl(activeWindow);
                         windowsAppUsageTracker.trackWebsiteUsage(activeWindow, browserUrl);
                     }
+                    takeUrlScreenshot(browserUrl);
                 } else {
                     // If not a browser, reset the tracking
                     if (appUsageTracker instanceof MacOsAppUsageTracker macOsAppUsageTracker) {
@@ -72,6 +79,15 @@ public class CrossPlatformBrowserAppUsageTracker implements NativeMouseMotionLis
             }
         }
 
+    }
+
+    private void takeUrlScreenshot(String browserUrl) {
+        if (StringUtils.hasText(browserUrl)) {
+            boolean isRestrictedWebsite = workTrackProperties.getRestrictedWebsites().stream().anyMatch(website -> browserUrl.toLowerCase().contains(website.toLowerCase()));
+            if (isRestrictedWebsite) {
+                applicationEventPublisher.publishEvent("takeScreenshot");
+            }
+        }
     }
 
     /**

@@ -7,6 +7,7 @@ import com.hemendra.http.WTHttpClient;
 import com.hemendra.util.WorkTrackUtils;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.context.event.EventListener;
 import org.springframework.stereotype.Component;
 
 import javax.imageio.IIOImage;
@@ -33,10 +34,17 @@ public class CrossPlatformScreenshotTaker {
     private final WTHttpClient wtHttpClient;
     private final WorkTrackUtils workTrackUtils;
 
+    @EventListener
+    public void listenScreenshotTakerEvent(String takeScreenshot) throws Exception {
+        if(takeScreenshot.equalsIgnoreCase("takeScreenshot")) {
+            runAppScreenshotTaker();
+        }
+    }
+
     public void runAppScreenshotTaker() throws Exception {
         AppUsageTracker appUsageTracker = appUsageTrackerFactory.getOsSpecificAppUsageTracker();
 
-        while (true) {
+        //while (true) {
             BufferedImage image = appUsageTracker.captureFullDesktop();
             if (image != null) {
                 saveScreenshot(image);
@@ -48,7 +56,7 @@ public class CrossPlatformScreenshotTaker {
             } catch (InterruptedException e) {
                 log.error("Error while taking screenshot: {}", e.getMessage());
             }
-        }
+        //}
     }
 
     private void saveScreenshot(BufferedImage image) throws Exception {

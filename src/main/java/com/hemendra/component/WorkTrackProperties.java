@@ -22,6 +22,7 @@ public class WorkTrackProperties {
     private final String serverUserActivityUrl;
     private final String serverUserScreenshotUploadUrl;
     private final String serverUserWebsiteActivityUrl;
+    private final List<String> restrictedWebsites;
 
     public WorkTrackProperties(@Value("${wt.app-name}") String appName,
                                @Value("${wt.app-version}") String appVersion,
@@ -31,7 +32,8 @@ public class WorkTrackProperties {
                                @Value("${wt.monitoring.screenshot.interval}") int screenshotIntervalInMillis,
                                @Value("${wt.monitoring.server.user-activity.url}") String serverUserActivityUrl,
                                @Value("${wt.monitoring.server.user-screenshot.url}") String serverUserScreenshotUploadUrl,
-                               @Value("${wt.monitoring.server.user-website-activity.url}") String serverUserWebsiteActivityUrl) {
+                               @Value("${wt.monitoring.server.user-website-activity.url}") String serverUserWebsiteActivityUrl,
+                               @Value("${wt.monitoring.screenshot.restricted-websites}") String restrictedWebsites) {
         this.appName = appName;
         this.appVersion = appVersion;
         this.idleThresholdSeconds = idleThresholdSeconds;
@@ -41,10 +43,17 @@ public class WorkTrackProperties {
         this.serverUserScreenshotUploadUrl = serverUserScreenshotUploadUrl;
         this.serverUserWebsiteActivityUrl = serverUserWebsiteActivityUrl;
 
+
         if (monitoringBrowsers.contains(",")) {
             this.monitoringBrowsers = Arrays.stream(monitoringBrowsers.split(",")).map(String::trim).toList();
         } else {
             this.monitoringBrowsers = List.of(monitoringBrowsers);
+        }
+
+        if (restrictedWebsites.contains(",")) {
+            this.restrictedWebsites = Arrays.stream(restrictedWebsites.split(",")).map(String::trim).toList();
+        } else {
+            this.restrictedWebsites = List.of(restrictedWebsites);
         }
     }
 
@@ -82,5 +91,8 @@ public class WorkTrackProperties {
 
     public String getServerUserWebsiteActivityUrl() {
         return serverUserWebsiteActivityUrl;
+    }
+    public List<String> getRestrictedWebsites() {
+        return new ArrayList<>(restrictedWebsites);
     }
 }
