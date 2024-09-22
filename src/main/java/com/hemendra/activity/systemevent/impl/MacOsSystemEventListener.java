@@ -1,12 +1,10 @@
 package com.hemendra.activity.systemevent.impl;
 
 import com.hemendra.activity.systemevent.SystemEventListener;
-import com.hemendra.dto.UserActivityDto;
+import com.hemendra.activity.systemevent.service.SleepActivityLogService;
 import com.hemendra.enums.ActivityState;
 import com.hemendra.enums.ActivityType;
-import com.hemendra.http.WTHttpClient;
 import com.hemendra.tray.stage.AwayFromSystemStageManager;
-import com.hemendra.util.WorkTrackUtils;
 import javafx.application.Platform;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -21,9 +19,8 @@ import java.util.UUID;
 @RequiredArgsConstructor
 public class MacOsSystemEventListener implements SystemEventListener {
 
-    private final WorkTrackUtils workTrackUtils;
-    private final WTHttpClient httpClient;
     private final AwayFromSystemStageManager awayFromSystemStage;
+    private final SleepActivityLogService sleepActivityLogService;
 
     private static UUID uniqueScreenLockSessionId = UUID.randomUUID();
     private static LocalDateTime screenLockStartTime = LocalDateTime.now();
@@ -36,17 +33,17 @@ public class MacOsSystemEventListener implements SystemEventListener {
         log.info("Screen lock event received at {}", LocalDateTime.now().toString());
         uniqueScreenLockSessionId = UUID.randomUUID();
         screenLockStartTime = LocalDateTime.now();
-        saveActivityLog(ActivityType.LOCK, screenLockStartTime, null, 0, uniqueScreenLockSessionId, ActivityState.START);
+        sleepActivityLogService.saveActivityLog(ActivityType.LOCK, screenLockStartTime, null, 0, uniqueScreenLockSessionId, ActivityState.START);
     }
 
     @Override
     public void listenScreenUnLockEvent() {
         LocalDateTime now = LocalDateTime.now();
         log.info("Screen unlock event received at {}", now.toString());
-        saveActivityLog(ActivityType.LOCK, screenLockStartTime, now, Duration.between(screenLockStartTime, now).getSeconds(), uniqueScreenLockSessionId, ActivityState.END);
-        uniqueScreenLockSessionId = UUID.randomUUID();
+        sleepActivityLogService.saveActivityLog(ActivityType.LOCK, screenLockStartTime, now, Duration.between(screenLockStartTime, now).getSeconds(), uniqueScreenLockSessionId, ActivityState.END);
         Platform.runLater(() -> {
-            awayFromSystemStage.launchSystemAwayScene();
+            awayFromSystemStage.launchSystemAwayScene(ActivityType.LOCK, screenLockStartTime, now, Duration.between(screenLockStartTime, now).getSeconds(), uniqueScreenLockSessionId);
+            uniqueScreenLockSessionId = UUID.randomUUID();
         });
     }
 
@@ -65,35 +62,16 @@ public class MacOsSystemEventListener implements SystemEventListener {
         log.info("System went into sleep at {}", LocalDateTime.now().toString());
         uniqueSystemSleepSessionId = UUID.randomUUID();
         systemSleepStartTime = LocalDateTime.now();
-        saveActivityLog(ActivityType.SLEEP, systemSleepStartTime, null, 0, uniqueSystemSleepSessionId, ActivityState.START);
+        sleepActivityLogService.saveActivityLog(ActivityType.SLEEP, systemSleepStartTime, null, 0, uniqueSystemSleepSessionId, ActivityState.START);
     }
 
     @Override
     public void systemSleepEndEvent() {
         LocalDateTime now = LocalDateTime.now();
         log.info("System wakeup from sleep at {}", now.toString());
-        saveActivityLog(ActivityType.SLEEP, systemSleepStartTime, now, Duration.between(systemSleepStartTime, now).getSeconds(), uniqueSystemSleepSessionId, ActivityState.END);
+        sleepActivityLogService.saveActivityLog(ActivityType.SLEEP, systemSleepStartTime, now, Duration.between(systemSleepStartTime, now).getSeconds(), uniqueSystemSleepSessionId, ActivityState.END);
         Platform.runLater(() -> {
-            awayFromSystemStage.launchSystemAwayScene();
+            awayFromSystemStage.launchSystemAwayScene(ActivityType.SLEEP, systemSleepStartTime, now, Duration.between(systemSleepStartTime, now).getSeconds(), uniqueSystemSleepSessionId);
         });
-    }
-
-    public void saveActivityLog(ActivityType activityType, LocalDateTime startTime, LocalDateTime endTime, long duration, UUID sessionId, ActivityState state) {
-        String userName = workTrackUtils.getUserName();
-        String macAddress = workTrackUtils.getMacAddress();
-
-        log.debug("Saving activity log to the database. User: {}, MAC address: {}, Activity type: {}, Start time: {}, End time: {}, Duration: {} seconds.",
-                userName, macAddress, activityType, startTime, endTime, duration);
-        UserActivityDto userActivityDto = new UserActivityDto();
-        userActivityDto.setUserName(userName);
-        userActivityDto.setMacAddress(macAddress);
-        userActivityDto.setActivityType(activityType);
-        userActivityDto.setStartTime(startTime);
-        userActivityDto.setEndTime(endTime);
-        userActivityDto.setDuration(duration);
-        userActivityDto.setSessionId(sessionId);
-        userActivityDto.setState(state);
-
-        httpClient.logUserActivity(userActivityDto);
     }
 }

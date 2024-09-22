@@ -18,4 +18,7 @@ public class UserActivityDto {
     Long duration;
     UUID sessionId;
     ActivityState state;
+
+    String reason;
+    String activity;
 }

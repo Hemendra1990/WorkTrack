@@ -30,6 +30,7 @@ module WorkTrack {
     exports com.hemendra.activity.systemevent.impl;
     exports com.hemendra.activity.systemevent.factory;
     exports com.hemendra.activity.systemevent.screenlock.mac;
+    exports com.hemendra.activity.systemevent.service;
     exports com.hemendra.component;
     exports com.hemendra.config;
     exports com.hemendra.dto;
@@ -52,6 +53,7 @@ module WorkTrack {
     opens com.hemendra.activity.systemevent.impl;
     opens com.hemendra.activity.systemevent.factory;
     opens com.hemendra.activity.systemevent.screenlock.mac;
+    opens com.hemendra.activity.systemevent.service;
     opens com.hemendra.component;
     opens com.hemendra.config;
     opens com.hemendra.dto;
