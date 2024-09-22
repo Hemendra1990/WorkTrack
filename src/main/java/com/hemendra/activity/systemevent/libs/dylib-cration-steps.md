@@ -158,6 +158,11 @@ The header file you provided matches the package and method names correctly for 
    ```bash
    g++ -I"$JAVA_HOME/include" -I"$JAVA_HOME/include/darwin" -shared -fPIC -framework IOKit -framework CoreFoundation -o screenlockdetector.dylib screenlockdetector.cpp
    ```
+   
+   #for second lib compilation
+3. ```
+   g++ -std=c++11 -I"$JAVA_HOME/include" -I"$JAVA_HOME/include/darwin" -shared -fPIC -framework AppKit -framework CoreFoundation -o macScreenLockDetector.dylib macscreenlockdetector.mm
+   ```
 
     - Ensure that `$JAVA_HOME` points to the correct Java installation.
     - If the library is not successfully compiled, check for errors and resolve them before proceeding.
