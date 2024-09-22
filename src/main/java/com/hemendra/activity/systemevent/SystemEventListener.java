@@ -1,7 +1,8 @@
 package com.hemendra.activity.systemevent;
 
 public interface SystemEventListener {
-    void listenScreenLockOrUnlockEvent();
+    void listenScreenLockEvent();
+    void listenScreenUnLockEvent();
     void listenSystemEvent();
     void listenShutdownEvent();
 }

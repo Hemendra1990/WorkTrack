@@ -26,6 +26,9 @@ module WorkTrack {
     exports com.hemendra.activity.apptracker.browser;
     exports com.hemendra.activity.apptracker.screenshot;
     exports com.hemendra.activity.apptracker.trackerimpl;
+    exports com.hemendra.activity.systemevent;
+    exports com.hemendra.activity.systemevent.impl;
+    exports com.hemendra.activity.systemevent.factory;
     exports com.hemendra.component;
     exports com.hemendra.config;
     exports com.hemendra.dto;
@@ -44,6 +47,9 @@ module WorkTrack {
     opens com.hemendra.activity.apptracker.screenshot;
     opens com.hemendra.activity.apptracker.trackerimpl;
     opens com.hemendra.activity.apptracker.trackerimpl.factory;
+    opens com.hemendra.activity.systemevent;
+    opens com.hemendra.activity.systemevent.impl;
+    opens com.hemendra.activity.systemevent.factory;
     opens com.hemendra.component;
     opens com.hemendra.config;
     opens com.hemendra.dto;
@@ -54,7 +60,4 @@ module WorkTrack {
     opens com.hemendra.tray.stage;
     opens com.hemendra.listener;
     opens com.hemendra.util;
-    exports com.hemendra.activity.systemevent;
-    opens com.hemendra.activity.systemevent;
-
 }

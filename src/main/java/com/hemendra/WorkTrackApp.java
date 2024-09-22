@@ -3,6 +3,7 @@ package com.hemendra;
 import com.hemendra.activity.UserActivityMonitor;
 import com.hemendra.activity.apptracker.browser.CrossPlatformBrowserAppUsageTracker;
 import com.hemendra.activity.apptracker.screenshot.CrossPlatformScreenshotTaker;
+import com.hemendra.activity.systemevent.CrossPlatformSystemEventListener;
 import com.hemendra.activity.systemevent.SystemShutdownListener;
 import com.hemendra.component.WorkTrackProperties;
 import com.hemendra.config.WorkTrackConfig;
@@ -64,7 +65,6 @@ public class WorkTrackApp {
         log.info("Starting {} version {}", workTrackProperties.getAppName(), workTrackProperties.getAppVersion());
 
         Thread.ofVirtual().start(() -> {
-
             UserActivityMonitor activityMonitor = workTrackAppContext.getBean(UserActivityMonitor.class);
             activityMonitor.startMonitoring();
 
@@ -75,17 +75,22 @@ public class WorkTrackApp {
             appUsageTracker.runAppUsageTracker();
         });
 
-        Thread.ofVirtual().start(() -> {
+        /*Thread.ofVirtual().start(() -> {
             CrossPlatformScreenshotTaker screenshotTaker = BeanUtils.getBean(CrossPlatformScreenshotTaker.class);
             try {
                 screenshotTaker.runAppScreenshotTaker();
             } catch (Exception e) {
                 log.error("Error while taking screenshot: {}", e.getMessage());
             }
+        });*/
+
+        //Thread.ofVirtual().start(SystemShutdownListener::initializeSystemShutdownListener);
+
+        Thread systemEventListenerThread = Thread.ofVirtual().start(() -> {
+            CrossPlatformSystemEventListener systemEventListener = BeanUtils.getBean(CrossPlatformSystemEventListener.class);
+            systemEventListener.runSystemEventListener();
         });
-
-        Thread.ofVirtual().start(SystemShutdownListener::initializeSystemShutdownListener);
-
+        log.info("is systemEventListenerThread alive? {}", systemEventListenerThread.isAlive());
         Thread.currentThread().join();
     }
 

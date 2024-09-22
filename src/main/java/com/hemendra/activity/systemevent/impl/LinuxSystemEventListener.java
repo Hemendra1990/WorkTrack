@@ -7,7 +7,12 @@ import org.springframework.stereotype.Component;
 public class LinuxSystemEventListener implements SystemEventListener {
 
     @Override
-    public void listenScreenLockOrUnlockEvent() {
+    public void listenScreenLockEvent() {
+
+    }
+
+    @Override
+    public void listenScreenUnLockEvent() {
 
     }
 

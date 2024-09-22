@@ -29,7 +29,7 @@ void screenStateChanged(void *refCon, io_service_t service, natural_t messageTyp
     jvm->DetachCurrentThread();
 }
 
-extern "C" JNIEXPORT void JNICALL Java_com_example_ScreenLockDetector_startScreenLockDetection
+extern "C" JNIEXPORT void JNICALL Java_com_hemendra_activity_systemevent_libs_ScreenLockDetector_startScreenLockDetection
   (JNIEnv* env, jobject obj) {
     JavaVM* jvm;
     env->GetJavaVM(&jvm);
@@ -50,7 +50,7 @@ extern "C" JNIEXPORT void JNICALL Java_com_example_ScreenLockDetector_startScree
                        kCFRunLoopDefaultMode);
 }
 
-extern "C" JNIEXPORT void JNICALL Java_com_example_ScreenLockDetector_stopScreenLockDetection
+extern "C" JNIEXPORT void JNICALL Javacom_hemendra_activity_systemevent_libs_ScreenLockDetector_stopScreenLockDetection
   (JNIEnv* env, jobject obj) {
     IODeregisterForSystemPower(&notifierObject);
     IOServiceClose(root_port);
