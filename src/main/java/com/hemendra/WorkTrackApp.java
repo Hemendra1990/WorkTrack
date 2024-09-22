@@ -88,9 +88,6 @@ public class WorkTrackApp {
 
         CrossPlatformSystemEventListener systemEventListener = BeanUtils.getBean(CrossPlatformSystemEventListener.class);
         systemEventListener.runSystemEventListener();
-        /*Thread systemEventListenerThread = Thread.ofVirtual().start(() -> {
-        });
-        log.info("is systemEventListenerThread alive? {}", systemEventListenerThread.isAlive());*/
         Thread.currentThread().join();
     }
 
