@@ -10,11 +10,8 @@ import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
 public class WindowsScreenLockDetector {
-    private static final int NOTIFY_FOR_THIS_SESSION = 0;
-    private static final int WM_WTSSESSION_CHANGE = 0x02B1;
-    private static final int WTS_SESSION_LOCK = 0x7;
-    private static final int WTS_SESSION_UNLOCK = 0x8;
 
+    @Setter
     private WinDef.HWND hWnd;
 
     @Setter
@@ -32,48 +29,7 @@ public class WindowsScreenLockDetector {
     }
 
     public void startDetection() {
-        if (!Platform.isWindows()) {
-            throw new UnsupportedOperationException("This implementation only supports Windows.");
-        }
-
-        String className = "ScreenLockDetectorClass";
-        WinUser.WNDCLASSEX wClass = new WinUser.WNDCLASSEX();
-        wClass.hInstance = null;
-        wClass.lpfnWndProc = new WinUser.WindowProc() {
-            @Override
-            public WinDef.LRESULT callback(WinDef.HWND hwnd, int uMsg, WinDef.WPARAM wParam, WinDef.LPARAM lParam) {
-                switch (uMsg) {
-                    case WM_WTSSESSION_CHANGE:
-                        if (wParam.intValue() == WTS_SESSION_LOCK) {
-                            listener.listenScreenLockEvent();
-                        } else if (wParam.intValue() == WTS_SESSION_UNLOCK) {
-                            listener.listenScreenUnLockEvent();
-                        }
-                        return new WinDef.LRESULT(0);
-                    default:
-                        return User32.INSTANCE.DefWindowProc(hwnd, uMsg, wParam, lParam);
-                }
-            }
-        };
-        wClass.lpszClassName = className;
-        User32.INSTANCE.RegisterClassEx(wClass);
-        hWnd = User32.INSTANCE.CreateWindowEx(User32.WS_EX_TOPMOST, className,
-                "ScreenLockDetector", 0, 0, 0, 0, 0,
-                null, null, null, null);
-
-        if (hWnd == null) {
-            throw new RuntimeException("Failed to create window");
-        }
-
-        if (!Wtsapi32.INSTANCE.WTSRegisterSessionNotification(hWnd, NOTIFY_FOR_THIS_SESSION)) {
-            throw new RuntimeException("Failed to register for session notifications");
-        }
-
-        WinUser.MSG msg = new WinUser.MSG();
-        while (User32.INSTANCE.GetMessage(msg, null, 0, 0) != 0) {
-            User32.INSTANCE.TranslateMessage(msg);
-            User32.INSTANCE.DispatchMessage(msg);
-        }
+        listener.listenSystemEvent();
     }
 
     public void stopDetection() {
