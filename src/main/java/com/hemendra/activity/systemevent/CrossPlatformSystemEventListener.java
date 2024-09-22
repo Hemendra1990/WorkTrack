@@ -1,8 +1,11 @@
 package com.hemendra.activity.systemevent;
 
 import com.hemendra.activity.systemevent.factory.SystemEventListenerFactory;
+import com.hemendra.activity.systemevent.impl.MacOsSystemEventListener;
+import com.hemendra.activity.systemevent.impl.WindowsSystemEventListener;
 import com.hemendra.activity.systemevent.libs.SystemSleepDetector;
 import com.hemendra.activity.systemevent.screenlock.mac.MacOsScreenLockDetector;
+import com.hemendra.activity.systemevent.screenlock.win.WindowsScreenLockDetector;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
@@ -15,13 +18,26 @@ public class CrossPlatformSystemEventListener {
 
     public void runSystemEventListener() {
         SystemEventListener osSpecificSystemEventListener = systemEventListenerFactory.getOsSpecificSystemEventListener();
-        Thread.ofVirtual().start(()-> {
-            detectSystemSleep(osSpecificSystemEventListener);
-        });
 
-        Thread.ofVirtual().start(()-> {
-            detectSystemScreenLock(osSpecificSystemEventListener);
-        });
+        if (osSpecificSystemEventListener instanceof WindowsSystemEventListener) {
+            detectWindowsSystemScreenLock(osSpecificSystemEventListener);
+        } else if (osSpecificSystemEventListener instanceof MacOsSystemEventListener) {
+            Thread.ofVirtual().start(()-> {
+                detectSystemSleep(osSpecificSystemEventListener);
+            });
+
+            Thread.ofVirtual().start(()-> {
+                detectSystemScreenLock(osSpecificSystemEventListener);
+            });
+        }
+
+
+    }
+
+    private void detectWindowsSystemScreenLock(SystemEventListener osSpecificSystemEventListener) {
+        WindowsScreenLockDetector windowsScreenLockDetector = WindowsScreenLockDetector.getInstance();
+        windowsScreenLockDetector.setListener(osSpecificSystemEventListener);
+        windowsScreenLockDetector.startDetection();
     }
 
     /**
