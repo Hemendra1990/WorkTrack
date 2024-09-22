@@ -4,6 +4,9 @@ import com.hemendra.activity.systemevent.SystemEventListener;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 
+import java.time.LocalDateTime;
+import java.util.Date;
+
 @Component
 @Slf4j
 public class MacOsSystemEventListener implements SystemEventListener {
@@ -33,12 +36,12 @@ public class MacOsSystemEventListener implements SystemEventListener {
 
     @Override
     public void listenScreenLockEvent() {
-        log.info("Screen lock event received");
+        log.info("Screen lock event received at {}", LocalDateTime.now().toString());
     }
 
     @Override
     public void listenScreenUnLockEvent() {
-        log.info("Screen unlock event received");
+        log.info("Screen unlock event received at {}", LocalDateTime.now().toString());
     }
 
     @Override
@@ -49,5 +52,15 @@ public class MacOsSystemEventListener implements SystemEventListener {
     @Override
     public void listenShutdownEvent() {
 
+    }
+
+    @Override
+    public void systemSleepStartEvent() {
+        log.info("System went into sleep at {}", LocalDateTime.now().toString());
+    }
+
+    @Override
+    public void systemSleepEndEvent() {
+        log.info("System wakeup from sleep at {}", LocalDateTime.now().toString());
     }
 }

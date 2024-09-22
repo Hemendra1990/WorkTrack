@@ -5,4 +5,7 @@ public interface SystemEventListener {
     void listenScreenUnLockEvent();
     void listenSystemEvent();
     void listenShutdownEvent();
+
+    void systemSleepStartEvent();
+    void systemSleepEndEvent();
 }

@@ -25,4 +25,14 @@ public class WindowsSystemEventListener implements SystemEventListener {
     public void listenShutdownEvent() {
 
     }
+
+    @Override
+    public void systemSleepStartEvent() {
+
+    }
+
+    @Override
+    public void systemSleepEndEvent() {
+
+    }
 }

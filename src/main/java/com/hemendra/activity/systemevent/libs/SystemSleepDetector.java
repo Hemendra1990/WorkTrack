@@ -23,7 +23,8 @@ public class SystemSleepDetector {
     }
 
 
-    private SystemSleepDetector() {}
+    private SystemSleepDetector() {
+    }
 
     public static synchronized SystemSleepDetector getInstance() {
         if (instance == null) {
@@ -34,6 +35,7 @@ public class SystemSleepDetector {
 
 
     public native void startScreenLockDetection();
+
     public native void stopScreenLockDetection();
 
     public void setListener(SystemEventListener listener) {
@@ -42,13 +44,11 @@ public class SystemSleepDetector {
 
     private void onScreenLocked() {
         // Handle screen locked event
-        log.info("Screen locked");
-        this.listener.listenScreenLockEvent();
+        this.listener.systemSleepStartEvent();
     }
 
     private void onScreenUnlocked() {
         // Handle screen unlocked event
-        log.info("Screen unlocked");
-        this.listener.listenScreenUnLockEvent();
+        this.listener.systemSleepEndEvent();
     }
 }
