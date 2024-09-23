@@ -1,91 +1,105 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import javafx.geometry.Insets?>
 <?import javafx.scene.control.Button?>
 <?import javafx.scene.control.ComboBox?>
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.Separator?>
 <?import javafx.scene.control.TextArea?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.effect.Light.Distant?>
+<?import javafx.scene.effect.Lighting?>
+<?import javafx.scene.effect.Shadow?>
+<?import javafx.scene.image.Image?>
+<?import javafx.scene.image.ImageView?>
 <?import javafx.scene.layout.AnchorPane?>
-<?import javafx.scene.layout.HBox?>
 <?import javafx.scene.text.Font?>
 
-<AnchorPane fx:id="wtAwayFromSystemRootPane" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="374.0" prefWidth="633.0" xmlns="http://javafx.com/javafx/22" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.hemendra.tray.controller.WtAwayFromSystemController">
+<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="355.0" prefWidth="573.0" xmlns="http://javafx.com/javafx/22" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.hemendra.tray.controller.WtAwayFromSystemController">
    <children>
-      <HBox layoutX="3.0" layoutY="1.0" prefHeight="55.0" prefWidth="633.0">
-         <children>
-            <Label fx:id="activitySummaryLabel" prefHeight="93.0" prefWidth="628.0" text="You have been away from your system for 00:17:22 since 16 Sep 2024 15:02:00. &#10;Please provide activity details during this period." textOverrun="CLIP">
-               <font>
-                  <Font name="System Bold" size="15.0" />
-               </font>
-               <padding>
-                  <Insets bottom="4.0" left="4.0" right="4.0" top="4.0" />
-               </padding>
-            </Label>
-         </children>
-      </HBox>
-      <HBox layoutX="3.0" layoutY="82.0" prefHeight="44.0" prefWidth="628.0">
-         <children>
-            <HBox prefHeight="44.0" prefWidth="136.0">
-               <children>
-                  <Label prefHeight="33.0" prefWidth="45.0" text="From:    " textOverrun="CLIP">
-                     <font>
-                        <Font name="System Bold" size="14.0" />
-                     </font>
-                  </Label>
-                  <Label fx:id="fromTimeLabel" alignment="CENTER" contentDisplay="TOP" prefHeight="33.0" prefWidth="72.0" style="-fx-border-style: solid;" text="12:30am" textAlignment="CENTER">
-                     <padding>
-                        <Insets bottom="3.0" left="3.0" right="3.0" top="3.0" />
-                     </padding>
-                  </Label>
-               </children>
-               <HBox.margin>
-                  <Insets left="4.0" />
-               </HBox.margin>
-            </HBox>
-            <HBox layoutX="10.0" layoutY="10.0" prefHeight="55.0" prefWidth="138.0">
-               <children>
-                  <Label prefHeight="33.0" prefWidth="45.0" text="To:    " textOverrun="CLIP">
-                     <font>
-                        <Font name="System Bold" size="14.0" />
-                     </font>
-                  </Label>
-                  <Label fx:id="toTimeLabel" alignment="CENTER" contentDisplay="TOP" prefHeight="33.0" prefWidth="72.0" style="-fx-border-style: solid;" text="12:30am" textAlignment="CENTER">
-                     <padding>
-                        <Insets bottom="3.0" left="3.0" right="3.0" top="3.0" />
-                     </padding>
-                  </Label>
-               </children>
-            </HBox>
-            <HBox layoutX="148.0" layoutY="10.0" prefHeight="44.0" prefWidth="289.0">
-               <children>
-                  <Label prefHeight="32.0" prefWidth="60.0" text="Activity:    " textOverrun="CLIP">
-                     <font>
-                        <Font name="System Bold" size="14.0" />
-                     </font>
-                  </Label>
-                  <ComboBox fx:id="activityComboBox" prefHeight="31.0" prefWidth="228.0" promptText="Select Activity" />
-               </children>
-            </HBox>
-         </children>
-      </HBox>
-      <HBox layoutX="3.0" layoutY="126.0" prefHeight="19.0" prefWidth="628.0">
-         <children>
-            <Label prefHeight="17.0" prefWidth="102.0" text="Description">
-               <HBox.margin>
-                  <Insets left="4.0" />
-               </HBox.margin>
-               <font>
-                  <Font name="System Bold" size="13.0" />
-               </font>
-            </Label>
-         </children>
-      </HBox>
-      <TextArea fx:id="activityDescTextarea" layoutX="9.0" layoutY="158.0" prefHeight="107.0" prefWidth="616.0" promptText="Enter description" />
-      <HBox layoutX="494.0" layoutY="337.0" prefHeight="33.0" prefWidth="138.0" />
-      <Button fx:id="activitySaveButton" layoutX="494.0" layoutY="310.0" mnemonicParsing="false" prefHeight="26.0" prefWidth="134.0" text="Save" />
-      <Label alignment="CENTER" layoutX="2.0" layoutY="345.0" prefHeight="17.0" prefWidth="633.0" text="© 2024 BIPros. All Rights Reserved." />
-      <Separator layoutX="4.0" layoutY="336.0" prefHeight="17.0" prefWidth="628.0" />
-      <Label fx:id="validationErrorMsgLabel" layoutX="10.0" layoutY="315.0" prefHeight="17.0" prefWidth="469.0" textFill="#e10707" />
+      <Label layoutX="63.0" layoutY="7.0" prefHeight="50.0" prefWidth="206.0" style="-fx-font-weight: bold; -fx-font-family: Helvetica;" text="Unity Tracker" textFill="#1077df">
+         <font>
+            <Font size="27.0" />
+         </font>
+         <effect>
+            <Lighting diffuseConstant="1.5">
+               <bumpInput>
+                  <Shadow />
+               </bumpInput>
+               <light>
+                  <Light.Distant />
+               </light>
+            </Lighting>
+         </effect>
+      </Label>
+      <Label layoutX="373.0" layoutY="14.0" prefHeight="50.0" prefWidth="186.0" style="-fx-font-weight: bold;" text="Activity Away From System" textFill="#1b0ecfdf">
+         <effect>
+            <Lighting diffuseConstant="1.5">
+               <bumpInput>
+                  <Shadow />
+               </bumpInput>
+               <light>
+                  <Light.Distant />
+               </light>
+            </Lighting>
+         </effect>
+         <font>
+            <Font size="14.0" />
+         </font>
+      </Label>
+      <Separator layoutX="18.0" layoutY="56.0" prefHeight="3.0" prefWidth="536.0">
+         <effect>
+            <Lighting>
+               <bumpInput>
+                  <Shadow />
+               </bumpInput>
+               <light>
+                  <Light.Distant />
+               </light>
+            </Lighting>
+         </effect>
+      </Separator>
+      <Label fx:id="activitySummaryLabel" layoutX="22.0" layoutY="71.0" prefHeight="40.0" prefWidth="530.0" text="You have been away from your system for 12:10 since 02:45. Please provide activity details during this period." textAlignment="JUSTIFY" wrapText="true" />
+      <Label layoutX="25.0" layoutY="130.0" prefHeight="18.0" prefWidth="58.0" text="From :" />
+      <TextField fx:id="fromTimeTextField" disable="true" layoutX="64.0" layoutY="125.0" prefHeight="26.0" prefWidth="70.0" style="-fx-alignment: center;" text="12:10" />
+      <Label layoutX="149.0" layoutY="130.0" prefHeight="18.0" prefWidth="58.0" text="To :" />
+      <TextField fx:id="toTimeTextField" disable="true" layoutX="178.0" layoutY="126.0" prefHeight="26.0" prefWidth="70.0" style="-fx-alignment: center;" text="02:45" />
+      <Label layoutX="285.0" layoutY="129.0" prefHeight="18.0" prefWidth="58.0" text="Activity   :" />
+      <Label layoutX="25.0" layoutY="180.0" text="Description" />
+      <Label layoutX="88.0" layoutY="178.0" style="-fx-text-fill: red;" text="*">
+         <font>
+            <Font size="14.0" />
+         </font>
+      </Label>
+      <TextArea fx:id="activityDescTextarea" layoutX="25.0" layoutY="202.0" prefHeight="82.0" prefWidth="523.0" promptText="Please provide description" />
+      <Button fx:id="activitySaveButton" layoutX="490.0" layoutY="292.0" mnemonicParsing="false" prefHeight="26.0" prefWidth="58.0" text="Save" textFill="#221cd9" />
+      <Separator layoutX="18.0" layoutY="326.0" prefHeight="3.0" prefWidth="536.0">
+         <effect>
+            <Lighting>
+               <bumpInput>
+                  <Shadow />
+               </bumpInput>
+               <light>
+                  <Light.Distant />
+               </light>
+            </Lighting>
+         </effect>
+      </Separator>
+      <Label layoutX="20.0" layoutY="329.0" opacity="0.46" prefHeight="20.0" prefWidth="530.0" style="-fx-alignment: center;" text="© 2024 Bipros. All Rights Reserved." textAlignment="CENTER" wrapText="true">
+         <font>
+            <Font size="10.0" />
+         </font>
+      </Label>
+      <ComboBox fx:id="activityComboBox" layoutX="351.0" layoutY="125.0" prefHeight="26.0" prefWidth="200.0" promptText="Select Activity" />
+      <Label fx:id="validationErrorMsgLabel" layoutX="25.0" layoutY="297.0" prefHeight="17.0" prefWidth="326.0" textFill="#d72c2c" />
+      <Label layoutX="326.0" layoutY="127.0" style="-fx-text-fill: red;" text="*">
+         <font>
+            <Font size="14.0" />
+         </font>
+      </Label>
+      <ImageView fitHeight="40.0" fitWidth="41.0" layoutX="18.0" layoutY="12.0" pickOnBounds="true" preserveRatio="true">
+         <image>
+            <Image url="@../../../logo-light.png" />
+         </image>
+      </ImageView>
    </children>
 </AnchorPane>

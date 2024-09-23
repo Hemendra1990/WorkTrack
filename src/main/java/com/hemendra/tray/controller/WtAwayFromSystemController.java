@@ -6,14 +6,9 @@ import com.hemendra.enums.ActivityType;
 import com.hemendra.util.BeanUtils;
 import com.hemendra.util.WtFxUtils;
 import javafx.fxml.FXML;
-import javafx.scene.control.Button;
-import javafx.scene.control.ComboBox;
-import javafx.scene.control.Label;
-import javafx.scene.control.TextArea;
+import javafx.scene.control.*;
 import javafx.scene.layout.Pane;
 import javafx.stage.Stage;
-import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import java.time.LocalDateTime;
@@ -31,10 +26,10 @@ public class WtAwayFromSystemController {
     private Label activitySummaryLabel;
 
     @FXML
-    private Label fromTimeLabel;
+    private TextField fromTimeTextField;
 
     @FXML
-    private Label toTimeLabel;
+    private TextField toTimeTextField;
 
     @FXML
     private ComboBox<String> activityComboBox;
@@ -113,9 +108,9 @@ public class WtAwayFromSystemController {
         //Update the from and to time
         String toTimeFormated = WtFxUtils.getTimeFormat(endTime);
         String fromTimeFormated = WtFxUtils.getTimeFormat(startTime);
-        fromTimeLabel.setText(String.format(summaryLabel, awayForFormattedTime, formattedStartTime));
-        fromTimeLabel.setText(fromTimeFormated);
-        toTimeLabel.setText(toTimeFormated);
+        fromTimeTextField.setText(String.format(summaryLabel, awayForFormattedTime, formattedStartTime));
+        fromTimeTextField.setText(fromTimeFormated);
+        toTimeTextField.setText(toTimeFormated);
     }
 
     public void setStage(Stage systemAwayStage) {
