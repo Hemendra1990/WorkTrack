@@ -8,6 +8,7 @@ import javafx.geometry.Rectangle2D;
 import javafx.scene.Scene;
 import javafx.scene.effect.GaussianBlur;
 import javafx.scene.image.Image;
+import javafx.scene.input.KeyCombination;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.StackPane;
 import javafx.stage.Modality;
@@ -59,6 +60,7 @@ public class AwayFromSystemStageManager {
             // Make the stage full screen
             systemAwayStage.setFullScreen(true);
             systemAwayStage.setFullScreenExitHint("");  // Remove the exit full screen hint
+            systemAwayStage.setFullScreenExitKeyCombination(KeyCombination.NO_MATCH);
 
             // Show the modal stage
             systemAwayStage.show();
