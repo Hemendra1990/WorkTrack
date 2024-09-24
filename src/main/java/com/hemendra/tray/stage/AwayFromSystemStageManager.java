@@ -3,6 +3,7 @@ package com.hemendra.tray.stage;
 import com.hemendra.activity.systemevent.impl.MacOsSystemEventListener;
 import com.hemendra.enums.ActivityType;
 import com.hemendra.tray.controller.WtAwayFromSystemController;
+import com.sun.jna.Platform;
 import javafx.fxml.FXMLLoader;
 import javafx.geometry.Rectangle2D;
 import javafx.scene.Scene;
@@ -61,6 +62,7 @@ public class AwayFromSystemStageManager {
             systemAwayStage.setFullScreen(true);
             systemAwayStage.setFullScreenExitHint("");  // Remove the exit full screen hint
             systemAwayStage.setFullScreenExitKeyCombination(KeyCombination.NO_MATCH);
+            focusOnApp(systemAwayStage);
 
             // Show the modal stage
             systemAwayStage.show();
@@ -70,6 +72,22 @@ public class AwayFromSystemStageManager {
             controller.setData(activityType, startTime, endTime, durationInSeconds, sessionId);
         } catch (IOException exception) {
             log.error("Unable to show the away stage", exception);
+        }
+    }
+
+    private static void focusOnApp(Stage systemAwayStage) {
+        systemAwayStage.focusedProperty().addListener((observable, oldValue, newValue) -> {
+            log.info("Focus on the system away stage old {}, new {}", oldValue, newValue);
+            if (!newValue) {
+                // Run the request to bring the stage to the front on the JavaFX Application Thread
+                javafx.application.Platform
+                        .runLater(() -> {
+                            systemAwayStage.toFront();
+                            systemAwayStage.requestFocus();
+                        });
+            }
+        });
+        if (Platform.isWindows()) {
         }
     }
 
