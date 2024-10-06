@@ -5,6 +5,7 @@ import com.hemendra.activity.systemevent.screenlock.win.MyUser32;
 import com.hemendra.activity.systemevent.screenlock.win.WindowsScreenLockDetector;
 import com.hemendra.activity.systemevent.screenlock.win.WindowsSystemMonitor;
 import com.hemendra.activity.systemevent.service.SleepActivityLogService;
+import com.hemendra.activity.systemreset.impl.WindowsSystemResetListener;
 import com.hemendra.enums.ActivityState;
 import com.hemendra.enums.ActivityType;
 import com.hemendra.tray.stage.AwayFromSystemStageManager;
@@ -32,6 +33,7 @@ public class WindowsSystemEventListener implements SystemEventListener {
 
     private final AwayFromSystemStageManager awayFromSystemStage;
     private final SleepActivityLogService sleepActivityLogService;
+    private final WindowsSystemResetListener systemResetListener;
 
     private static UUID uniqueScreenLockSessionId = UUID.randomUUID();
     private static LocalDateTime screenLockStartTime = LocalDateTime.now();
@@ -64,6 +66,9 @@ public class WindowsSystemEventListener implements SystemEventListener {
         uniqueScreenLockSessionId = UUID.randomUUID();
         screenLockStartTime = LocalDateTime.now();
         sleepActivityLogService.saveActivityLog(ActivityType.LOCK, screenLockStartTime, null, 0, uniqueScreenLockSessionId, ActivityState.START);
+
+        //update reset last activity time
+        systemResetListener.updateLastActivityTime(screenLockStartTime);
     }
 
     @Override
@@ -71,10 +76,22 @@ public class WindowsSystemEventListener implements SystemEventListener {
         LocalDateTime now = LocalDateTime.now();
         log.info("Screen unlock event received at {}", now.toString());
         sleepActivityLogService.saveActivityLog(ActivityType.LOCK, screenLockStartTime, now, Duration.between(screenLockStartTime, now).getSeconds(), uniqueScreenLockSessionId, ActivityState.END);
-        Platform.runLater(() -> {
-            awayFromSystemStage.launchSystemAwayScene(ActivityType.LOCK, screenLockStartTime, now, Duration.between(screenLockStartTime, now).getSeconds(), uniqueScreenLockSessionId);
-            uniqueScreenLockSessionId = UUID.randomUUID();
-        });
+
+        //when system is getting unlocked check whether user is starting his/her day
+        boolean startOfDay = systemResetListener.isStartOfDay(now);
+        if(startOfDay) {
+            Platform.runLater(() -> {
+                systemResetListener.promptShiftSelection();
+                systemResetListener.resetSystemState();
+                uniqueScreenLockSessionId = UUID.randomUUID();
+            });
+        } else {
+            Platform.runLater(() -> {
+                awayFromSystemStage.launchSystemAwayScene(ActivityType.LOCK, screenLockStartTime, now, Duration.between(screenLockStartTime, now).getSeconds(), uniqueScreenLockSessionId);
+                uniqueScreenLockSessionId = UUID.randomUUID();
+            });
+        }
+
     }
 
     @Override
@@ -133,6 +150,8 @@ public class WindowsSystemEventListener implements SystemEventListener {
         uniqueSystemSleepSessionId = UUID.randomUUID();
         systemSleepStartTime = LocalDateTime.now();
         sleepActivityLogService.saveActivityLog(ActivityType.SLEEP, systemSleepStartTime, null, 0, uniqueSystemSleepSessionId, ActivityState.START);
+
+        systemResetListener.updateLastActivityTime(systemSleepStartTime);
     }
 
     @Override
@@ -140,10 +159,20 @@ public class WindowsSystemEventListener implements SystemEventListener {
         LocalDateTime now = LocalDateTime.now();
         log.info("Screen unlock event received at {}", now.toString());
         sleepActivityLogService.saveActivityLog(ActivityType.SLEEP, systemSleepStartTime, now, Duration.between(systemSleepStartTime, now).getSeconds(), uniqueSystemSleepSessionId, ActivityState.END);
-        Platform.runLater(() -> {
-            awayFromSystemStage.launchSystemAwayScene(ActivityType.SLEEP, systemSleepStartTime, now, Duration.between(systemSleepStartTime, now).getSeconds(), uniqueSystemSleepSessionId);
-            uniqueSystemSleepSessionId = UUID.randomUUID();
-        });
+
+        boolean startOfDay = systemResetListener.isStartOfDay(now);
+        if(startOfDay) {
+            Platform.runLater(() -> {
+                systemResetListener.promptShiftSelection();
+                systemResetListener.resetSystemState();
+                uniqueSystemSleepSessionId = UUID.randomUUID();
+            });
+        } else {
+            Platform.runLater(() -> {
+                awayFromSystemStage.launchSystemAwayScene(ActivityType.SLEEP, systemSleepStartTime, now, Duration.between(systemSleepStartTime, now).getSeconds(), uniqueSystemSleepSessionId);
+                uniqueSystemSleepSessionId = UUID.randomUUID();
+            });
+        }
     }
 
     private void checkShutdownEvent() {
@@ -151,7 +180,7 @@ public class WindowsSystemEventListener implements SystemEventListener {
             // Step 1: Read logs from the file
             JSONArray logs = readLogs();
 
-            if (logs != null && !logs.isEmpty()) {
+            if (!logs.isEmpty()) {
                 // Get the last event from the logs
                 JSONObject lastEvent = logs.getJSONObject(logs.length() - 1);
                 String activityType = lastEvent.getString("activity_type");
@@ -162,7 +191,8 @@ public class WindowsSystemEventListener implements SystemEventListener {
                 // Check if the last event was a system shutdown
                 if ("SHUTDOWN".equalsIgnoreCase(activityType)) {
                     log.info("Last event was a system shutdown. Processing logs.");
-                    processAndClearLog();;  // Process the logs and clear the log file
+                    isSystemBootingAfterThresholdTime(lastEvent);
+                    processAndClearLog();  // Process the logs and clear the log file
                 } else {
                     log.info("Last event was not a shutdown. No action taken.");
                 }
@@ -172,6 +202,27 @@ public class WindowsSystemEventListener implements SystemEventListener {
 
         } catch (IOException e) {
             log.error("Error occurred while reading the log file: {}", e.getMessage());
+        }
+    }
+
+    private void isSystemBootingAfterThresholdTime(JSONObject lastEvent) {
+        String activityType = lastEvent.getString("activity_type");
+        if ("SHUTDOWN".equalsIgnoreCase(activityType)) {
+            LocalDateTime startTime = LocalDateTime.parse(lastEvent.getString("start_time"));
+            LocalDateTime endTime = LocalDateTime.now();
+            systemResetListener.updateLastShutdownTime(startTime);
+            boolean startOfDay = systemResetListener.isStartOfDay(endTime);
+            if(startOfDay) {
+                Platform.runLater(() -> {
+                    systemResetListener.promptShiftSelection();
+                    systemResetListener.resetSystemState();
+                });
+            } else {
+                //When user is restarting the system within RESTART_THRESHOLD_MINUTES then consider that user was away from system
+                Platform.runLater(() -> {
+                    awayFromSystemStage.launchSystemAwayScene(ActivityType.RESTART, startTime, endTime, Duration.between(startTime, endTime).getSeconds(), UUID.randomUUID());
+                });
+            }
         }
     }
 
@@ -191,7 +242,7 @@ public class WindowsSystemEventListener implements SystemEventListener {
     private void processAndClearLog() {
         try {
             JSONArray events = readLogs();
-            if (events.length() > 0) {
+            if (!events.isEmpty()) {
                 insertEventsIntoUserActivity(events);  // Insert events into the database
                 clearLogFile();
             }

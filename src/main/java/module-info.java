@@ -40,6 +40,9 @@ module WorkTrack {
     exports com.hemendra.tray.controller;
     exports com.hemendra.tray.stage;
     exports com.hemendra.listener;
+    exports com.hemendra.activity.systemreset;
+    exports com.hemendra.activity.systemreset.factory;
+    exports com.hemendra.activity.systemreset.impl;
 
     //opens com.hemendra.config to spring.core;
     opens com.hemendra;
@@ -64,5 +67,8 @@ module WorkTrack {
     opens com.hemendra.tray.stage;
     opens com.hemendra.listener;
     opens com.hemendra.util;
+    opens com.hemendra.activity.systemreset;
+    opens com.hemendra.activity.systemreset.impl;
+    opens com.hemendra.activity.systemreset.factory;
 
 }

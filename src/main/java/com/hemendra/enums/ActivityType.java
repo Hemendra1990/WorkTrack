@@ -7,7 +7,8 @@ public enum ActivityType {
     BROWSING("BROWSING"),
     SHUTDOWN("SHUTDOWN"),
     LOCK("LOCK"),
-    SLEEP("SLEEP");
+    SLEEP("SLEEP"),
+    RESTART("RESTART");
 
     private String type;
 
